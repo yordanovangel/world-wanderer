@@ -2,95 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Reality Quest design tokens — warm explorer / field-journal */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Surfaces */
+    --background: 39 67% 96%;        /* parchment-50 #FBF7EF */
+    --foreground: 27 12% 21%;        /* ink-700 #3D3630 */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 27 12% 21%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 39 67% 96%;
+    --popover-foreground: 27 12% 21%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary = terracotta-500 */
+    --primary: 21 67% 55%;
+    --primary-foreground: 39 67% 96%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary = forest-700 */
+    --secondary: 144 35% 28%;
+    --secondary-foreground: 39 67% 96%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 38 47% 91%;             /* parchment-100 */
+    --muted-foreground: 27 8% 40%;   /* ink-500 */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 41 64% 44%;            /* ochre-700 */
+    --accent-foreground: 39 67% 96%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 50% 47%;        /* danger-600 */
+    --destructive-foreground: 39 67% 96%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 38 38% 84%;            /* parchment-200 */
+    --input: 38 38% 84%;
+    --ring: 21 67% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.875rem;              /* 14px */
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 39 67% 96%;
+    --sidebar-foreground: 27 12% 21%;
+    --sidebar-primary: 21 67% 55%;
+    --sidebar-primary-foreground: 39 67% 96%;
+    --sidebar-accent: 38 47% 91%;
+    --sidebar-accent-foreground: 27 16% 9%;
+    --sidebar-border: 38 38% 84%;
+    --sidebar-ring: 21 67% 55%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Dark mode kept minimal; brand is light-first */
+    --background: 27 16% 9%;
+    --foreground: 39 67% 96%;
+    --card: 27 16% 12%;
+    --card-foreground: 39 67% 96%;
+    --popover: 27 16% 12%;
+    --popover-foreground: 39 67% 96%;
+    --primary: 21 67% 55%;
+    --primary-foreground: 27 16% 9%;
+    --secondary: 144 35% 28%;
+    --secondary-foreground: 39 67% 96%;
+    --muted: 27 12% 16%;
+    --muted-foreground: 38 18% 70%;
+    --accent: 41 64% 44%;
+    --accent-foreground: 39 67% 96%;
+    --destructive: 0 50% 47%;
+    --destructive-foreground: 39 67% 96%;
+    --border: 27 12% 20%;
+    --input: 27 12% 20%;
+    --ring: 21 67% 55%;
+    --sidebar-background: 27 16% 9%;
+    --sidebar-foreground: 39 67% 96%;
+    --sidebar-primary: 21 67% 55%;
+    --sidebar-primary-foreground: 27 16% 9%;
+    --sidebar-accent: 27 12% 16%;
+    --sidebar-accent-foreground: 39 67% 96%;
+    --sidebar-border: 27 12% 20%;
+    --sidebar-ring: 21 67% 55%;
   }
 }
 
@@ -99,7 +86,39 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html, body, #root {
+    height: 100%;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-parchment-50 text-ink-700 font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1, h2 {
+    @apply font-display text-ink-900;
+    letter-spacing: -0.01em;
+  }
+
+  h3, h4, h5, h6 {
+    @apply text-ink-900 font-semibold;
+  }
+}
+
+@layer components {
+  .font-display { font-family: 'Fraunces', Georgia, serif; }
+  .font-mono-rq { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+  /* Mission card with terracotta left border (visual hierarchy cue) */
+  .rq-mission-card {
+    @apply bg-white rounded-2xl shadow-soft border border-parchment-200 border-l-4;
+    border-left-color: #D9763F;
+  }
+
+  /* Subtle parchment grain — applied to large surfaces */
+  .rq-grain {
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(28,25,21,0.04) 1px, transparent 0);
+    background-size: 6px 6px;
   }
 }
