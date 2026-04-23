@@ -206,6 +206,14 @@ export default function RoomLobbyPage() {
           Изчакваме host-а да стартира…
         </p>
       )}
+
+      {showShare && shareToken && (
+        <ShareModal
+          questTitle={questQ.data?.title}
+          shareToken={shareToken}
+          onClose={() => setShowShare(false)}
+        />
+      )}
     </div>
   );
 }
