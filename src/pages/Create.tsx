@@ -66,7 +66,7 @@ export default function CreatePage() {
           subtitle="Заснеми околността и получи 4–11 мини-задачи от AI"
         />
         <ModeCard
-          to="/create/multiplayer"
+          to="/create/multi/capture"
           icon={<Users size={28} />}
           title="Мултиплеър"
           subtitle="До 5 приятели се състезават на време и точки"
