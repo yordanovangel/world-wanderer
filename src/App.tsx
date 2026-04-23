@@ -26,6 +26,10 @@ import RoomResults from "./pages/RoomResults.tsx";
 import MultiCapture from "./pages/MultiCapture.tsx";
 import MultiConfig from "./pages/MultiConfig.tsx";
 import Join from "./pages/Join.tsx";
+import TreasureWizard from "./pages/TreasureWizard.tsx";
+import TreasurePreview from "./pages/TreasurePreview.tsx";
+import TreasurePlay from "./pages/TreasurePlay.tsx";
+import TreasureScoring from "./pages/TreasureScoring.tsx";
 import DevTest from "./pages/DevTest.tsx";
 
 const queryClient = new QueryClient();
@@ -47,6 +51,10 @@ const App = () => (
               <Route path="/create/solo/capture" element={<ProtectedRoute><SoloCapture /></ProtectedRoute>} />
               <Route path="/create/multi/capture" element={<ProtectedRoute><MultiCapture /></ProtectedRoute>} />
               <Route path="/create/multi/config" element={<ProtectedRoute><MultiConfig /></ProtectedRoute>} />
+              <Route path="/create/treasure/wizard" element={<ProtectedRoute><TreasureWizard /></ProtectedRoute>} />
+              <Route path="/create/treasure/preview" element={<ProtectedRoute><TreasurePreview /></ProtectedRoute>} />
+              <Route path="/quest/:id/treasure-play" element={<ProtectedRoute><TreasurePlay /></ProtectedRoute>} />
+              <Route path="/quest/:id/treasure-scoring" element={<ProtectedRoute><TreasureScoring /></ProtectedRoute>} />
               <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/quest/:id/intro" element={<ProtectedRoute><QuestIntro /></ProtectedRoute>} />

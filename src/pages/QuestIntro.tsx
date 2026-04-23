@@ -71,11 +71,15 @@ export default function QuestIntroPage() {
   }, [id]);
 
   const onStart = async () => {
-    if (!id) return;
+    if (!id || !quest) return;
     setStarting(true);
     try {
       const { session_id } = await startSession(id);
-      navigate(`/quest/${id}/play?session=${session_id}`, { replace: true });
+      const playPath =
+        quest.mode === 'treasure_hunt'
+          ? `/quest/${id}/treasure-play?session=${session_id}`
+          : `/quest/${id}/play?session=${session_id}`;
+      navigate(playPath, { replace: true });
     } catch (e: any) {
       toast({
         title: 'Не успяхме да стартираме сесия',
