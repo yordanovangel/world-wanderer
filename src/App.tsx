@@ -31,6 +31,9 @@ import TreasurePreview from "./pages/TreasurePreview.tsx";
 import TreasurePlay from "./pages/TreasurePlay.tsx";
 import TreasureScoring from "./pages/TreasureScoring.tsx";
 import DevTest from "./pages/DevTest.tsx";
+import SessionDetail from "./pages/SessionDetail.tsx";
+import ProfileCreated from "./pages/ProfileCreated.tsx";
+import QuestLeaderboard from "./pages/QuestLeaderboard.tsx";
 
 const queryClient = new QueryClient();
 
@@ -56,7 +59,10 @@ const App = () => (
               <Route path="/quest/:id/treasure-play" element={<ProtectedRoute><TreasurePlay /></ProtectedRoute>} />
               <Route path="/quest/:id/treasure-scoring" element={<ProtectedRoute><TreasureScoring /></ProtectedRoute>} />
               <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+              <Route path="/session/:id/detail" element={<ProtectedRoute><SessionDetail /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/profile/created" element={<ProtectedRoute><ProfileCreated /></ProtectedRoute>} />
+              <Route path="/quest/:id/leaderboard" element={<ProtectedRoute><QuestLeaderboard /></ProtectedRoute>} />
               <Route path="/quest/:id/intro" element={<ProtectedRoute><QuestIntro /></ProtectedRoute>} />
               <Route path="/quest/:id/play" element={<ProtectedRoute><QuestPlay /></ProtectedRoute>} />
               <Route path="/quest/:id/scoring" element={<ProtectedRoute><QuestScoring /></ProtectedRoute>} />
