@@ -22,6 +22,9 @@ import Profile from "./pages/Profile.tsx";
 import QuestPlay from "./pages/QuestPlay.tsx";
 import RoomLobby from "./pages/RoomLobby.tsx";
 import RoomPlay from "./pages/RoomPlay.tsx";
+import RoomResults from "./pages/RoomResults.tsx";
+import MultiCapture from "./pages/MultiCapture.tsx";
+import MultiConfig from "./pages/MultiConfig.tsx";
 import Join from "./pages/Join.tsx";
 import DevTest from "./pages/DevTest.tsx";
 
@@ -42,6 +45,8 @@ const App = () => (
               <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
               <Route path="/create" element={<ProtectedRoute><Create /></ProtectedRoute>} />
               <Route path="/create/solo/capture" element={<ProtectedRoute><SoloCapture /></ProtectedRoute>} />
+              <Route path="/create/multi/capture" element={<ProtectedRoute><MultiCapture /></ProtectedRoute>} />
+              <Route path="/create/multi/config" element={<ProtectedRoute><MultiConfig /></ProtectedRoute>} />
               <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/quest/:id/intro" element={<ProtectedRoute><QuestIntro /></ProtectedRoute>} />
@@ -51,6 +56,7 @@ const App = () => (
               <Route path="/quest/:id/complete" element={<ProtectedRoute><QuestComplete /></ProtectedRoute>} />
               <Route path="/room/:id/lobby" element={<ProtectedRoute><RoomLobby /></ProtectedRoute>} />
               <Route path="/room/:id/play" element={<ProtectedRoute><RoomPlay /></ProtectedRoute>} />
+              <Route path="/room/:id/results" element={<ProtectedRoute><RoomResults /></ProtectedRoute>} />
               <Route path="/join/:token" element={<Join />} />
               {import.meta.env.DEV && (
                 <Route path="/dev-test" element={<ProtectedRoute><DevTest /></ProtectedRoute>} />
