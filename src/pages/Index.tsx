@@ -1,7 +1,13 @@
 import { Compass, MapPlus, Notebook, User, Sparkles } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuth } from '@/lib/auth-context';
 
 const Splash = () => {
+  const { token, loading } = useAuth();
+
+  if (loading) return null;
+  if (token) return <Navigate to="/home" replace />;
+
   return (
     <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col items-center justify-between px-6 py-10 rq-grain">
       <div className="w-full pt-10 text-center animate-fade-slide-up">
@@ -35,7 +41,7 @@ const Splash = () => {
           Вече имам профил
         </Link>
         <p className="pt-2 text-center font-mono-rq text-[11px] uppercase tracking-wider text-ink-300">
-          v0.1 · етап 0
+          v0.2 · етап 2
         </p>
       </div>
     </div>
