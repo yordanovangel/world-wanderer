@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
   const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
-  if (!JWT_SECRET || JWT_SECRET.length < 32 || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  if (!JWT_SECRET || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     console.error('Missing env configuration', {
       hasJwtSecret: !!JWT_SECRET,
       jwtSecretLength: JWT_SECRET?.length ?? 0,
@@ -46,6 +46,10 @@ Deno.serve(async (req) => {
       hasServiceRoleKey: !!SUPABASE_SERVICE_ROLE_KEY,
     });
     return json({ error: 'Server misconfigured' }, 500);
+  }
+
+  if (JWT_SECRET.length < 32) {
+    console.warn('JWT_SECRET is shorter than recommended', { jwtSecretLength: JWT_SECRET.length });
   }
 
   let payload: any;
