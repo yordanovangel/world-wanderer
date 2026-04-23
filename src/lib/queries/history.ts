@@ -92,7 +92,7 @@ export async function fetchUserStats(userId: string): Promise<{
       .eq('player_id', userId)
       .eq('status', 'completed'),
   ]);
-  const totalScore = ((scoreAgg.data ?? []) as Array<{ total_score: number | null }>).reduce(
+  const totalScore = ((scoreAgg.data ?? []) as unknown as Array<{ total_score: number | null }>).reduce(
     (sum, r) => sum + (r.total_score ?? 0),
     0,
   );
