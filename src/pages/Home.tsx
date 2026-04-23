@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Settings, Plus } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
@@ -15,6 +15,7 @@ import { PastSessionRow } from '@/components/home/PastSessionRow';
 import { CreatedQuestRow } from '@/components/home/CreatedQuestRow';
 import { SectionError } from '@/components/home/SectionError';
 import { HorizontalSkeletons, RowSkeletons } from '@/components/home/Skeletons';
+import { toast } from '@/hooks/use-toast';
 
 type Status = 'loading' | 'ok' | 'error';
 
