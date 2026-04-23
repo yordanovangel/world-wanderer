@@ -12,6 +12,11 @@ import Register from "./pages/Register.tsx";
 import Login from "./pages/Login.tsx";
 import Home from "./pages/Home.tsx";
 import Create from "./pages/Create.tsx";
+import SoloCapture from "./pages/SoloCapture.tsx";
+import QuestIntro from "./pages/QuestIntro.tsx";
+import QuestScoring from "./pages/QuestScoring.tsx";
+import QuestResult from "./pages/QuestResult.tsx";
+import QuestComplete from "./pages/QuestComplete.tsx";
 import History from "./pages/History.tsx";
 import Profile from "./pages/Profile.tsx";
 import QuestPlay from "./pages/QuestPlay.tsx";
@@ -36,9 +41,14 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
               <Route path="/create" element={<ProtectedRoute><Create /></ProtectedRoute>} />
+              <Route path="/create/solo/capture" element={<ProtectedRoute><SoloCapture /></ProtectedRoute>} />
               <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/quest/:id/intro" element={<ProtectedRoute><QuestIntro /></ProtectedRoute>} />
               <Route path="/quest/:id/play" element={<ProtectedRoute><QuestPlay /></ProtectedRoute>} />
+              <Route path="/quest/:id/scoring" element={<ProtectedRoute><QuestScoring /></ProtectedRoute>} />
+              <Route path="/quest/:id/result" element={<ProtectedRoute><QuestResult /></ProtectedRoute>} />
+              <Route path="/quest/:id/complete" element={<ProtectedRoute><QuestComplete /></ProtectedRoute>} />
               <Route path="/room/:id/lobby" element={<ProtectedRoute><RoomLobby /></ProtectedRoute>} />
               <Route path="/room/:id/play" element={<ProtectedRoute><RoomPlay /></ProtectedRoute>} />
               <Route path="/join/:token" element={<Join />} />
