@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { QRCodeSVG } from 'qrcode.react';
-import { Copy, LogOut, Play, Share2, Crown, Loader2 } from 'lucide-react';
+import { LogOut, Play, Share2, Crown, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/lib/auth-context';
 import { toast } from '@/hooks/use-toast';
@@ -13,6 +12,7 @@ import {
   fetchRoomPlayers,
   startMultiplayerRoom,
 } from '@/lib/queries/multiplayer';
+import { ShareModal } from '@/components/ShareModal';
 
 export default function RoomLobbyPage() {
   const { id: roomId } = useParams<{ id: string }>();
