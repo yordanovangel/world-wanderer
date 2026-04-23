@@ -315,6 +315,14 @@ export default function SessionDetailPage() {
           </ul>
         </section>
       )}
+
+      {showShare && quest.share_token && (
+        <ShareModal
+          questTitle={quest.title}
+          shareToken={quest.share_token}
+          onClose={() => setShowShare(false)}
+        />
+      )}
     </div>
   );
 }
