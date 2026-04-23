@@ -70,6 +70,34 @@ export default function HomePage() {
     [userId],
   );
 
+  const inProgressRef = useRef<HTMLElement | null>(null);
+  const resumeShownRef = useRef(false);
+
+  // One-time resume banner per visit when in-progress sessions exist.
+  useEffect(() => {
+    if (resumeShownRef.current) return;
+    if (inProgress.status !== 'ok') return;
+    const count = inProgress.data?.length ?? 0;
+    if (count === 0) return;
+    resumeShownRef.current = true;
+    toast({
+      title: `Имаш ${count} незавършен${count === 1 ? 'о' : 'и'} ${count === 1 ? 'приключение' : 'приключения'}`,
+      description: 'Натисни „Продължи", за да отидеш до тях.',
+      action: (
+        <button
+          type="button"
+          onClick={() =>
+            inProgressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+          className="ml-2 inline-flex h-8 items-center justify-center rounded-lg bg-terracotta-500 px-3 text-xs font-semibold text-parchment-50 shadow-soft hover:bg-terracotta-700"
+        >
+          Продължи
+        </button>
+      ) as any,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inProgress.status]);
+
   return (
     <div className="mx-auto w-full max-w-md">
       {/* Top bar */}
