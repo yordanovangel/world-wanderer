@@ -135,5 +135,6 @@ export async function fetchSourceImagePaths(quest_id: string): Promise<string[]>
     .eq('quest_id', quest_id)
     .order('order_idx', { ascending: true });
   if (error) throw error;
-  return ((data ?? []) as Array<{ storage_path: string }>).map((r) => r.storage_path);
+  const rows = (data ?? []) as unknown as Array<{ storage_path: string }>;
+  return rows.map((r) => r.storage_path);
 }
