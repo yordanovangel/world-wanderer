@@ -56,12 +56,11 @@ const QUEST_TOOL = {
         description: { type: 'string', description: 'One-sentence hook in Bulgarian' },
         tasks: {
           type: 'array',
-          minItems: 4,
-          maxItems: 11,
+          description: 'Between 4 and 11 tasks',
           items: {
             type: 'object',
             properties: {
-              order: { type: 'integer', minimum: 1 },
+              order: { type: 'integer', description: 'Order index starting at 1' },
               title: { type: 'string', description: 'Task title in Bulgarian' },
               description: {
                 type: 'string',
@@ -72,7 +71,7 @@ const QUEST_TOOL = {
                 description:
                   'English; for the AI evaluator. What must be in the photo for full marks, partial credit conditions, what is disqualifying.',
               },
-              max_points: { type: 'integer', enum: [10] },
+              max_points: { type: 'integer', description: 'Always 10' },
             },
             required: ['order', 'title', 'description', 'hidden_criteria', 'max_points'],
           },
