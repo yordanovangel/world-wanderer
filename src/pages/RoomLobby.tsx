@@ -81,6 +81,8 @@ export default function RoomLobbyPage() {
   }, [room, navigate]);
 
   const shareToken = questQ.data?.share_token ?? '';
+
+  const onStart = async () => {
     if (!roomId || !isHost || playerCount < 2) return;
     setBusy(true);
     try {
@@ -134,40 +136,14 @@ export default function RoomLobbyPage() {
         </p>
       </article>
 
-      {shareUrl && (
-        <section className="mt-5 rounded-2xl border border-parchment-200 bg-parchment-50 p-5 shadow-soft">
-          <div className="flex justify-center">
-            <div className="rounded-xl bg-white p-3 shadow-soft">
-              <QRCodeSVG
-                value={shareUrl}
-                size={200}
-                level="M"
-                marginSize={2}
-                fgColor="#7a3a1f"
-                bgColor="#fbf6ec"
-              />
-            </div>
-          </div>
-          <p className="mt-3 break-all rounded-lg bg-white px-3 py-2 text-center font-mono text-xs text-ink-700 shadow-soft">
-            {shareUrl}
-          </p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={onCopy}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-ink-900 shadow-soft hover:bg-parchment-100"
-            >
-              <Copy size={14} /> Копирай
-            </button>
-            <button
-              type="button"
-              onClick={onShare}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-ink-900 shadow-soft hover:bg-parchment-100"
-            >
-              <Share2 size={14} /> Сподели
-            </button>
-          </div>
-        </section>
+      {shareToken && (
+        <button
+          type="button"
+          onClick={() => setShowShare(true)}
+          className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-forest-700 bg-white px-4 text-sm font-semibold text-forest-700 shadow-soft hover:bg-parchment-100"
+        >
+          <Share2 size={16} /> Сподели стая (QR + линк)
+        </button>
       )}
 
       <section className="mt-5">
