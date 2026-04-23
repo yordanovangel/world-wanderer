@@ -23,6 +23,7 @@ export default function QuestIntroPage() {
   const [thumbs, setThumbs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
+  const [showShare, setShowShare] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -156,13 +157,20 @@ export default function QuestIntroPage() {
         </button>
         <button
           type="button"
-          disabled
-          title="Скоро"
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-forest-700 bg-white px-4 text-base font-semibold text-forest-700 opacity-60"
+          onClick={() => setShowShare(true)}
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-forest-700 bg-white px-4 text-base font-semibold text-forest-700 hover:bg-parchment-100"
         >
           <Share2 size={18} /> Сподели с приятел
         </button>
       </div>
+
+      {showShare && (
+        <ShareModal
+          questTitle={quest.title}
+          shareToken={quest.share_token}
+          onClose={() => setShowShare(false)}
+        />
+      )}
     </div>
   );
 }
