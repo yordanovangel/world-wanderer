@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ListChecks, Play, Share2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import {
   fetchPublicTasks,
   fetchQuest,
@@ -12,6 +11,7 @@ import {
 } from '@/lib/queries/quests';
 import { invokeFn } from '@/lib/fn';
 import { toast } from '@/hooks/use-toast';
+import { ShareModal } from '@/components/ShareModal';
 
 const SOURCE_BUCKET = 'quest-sources';
 
