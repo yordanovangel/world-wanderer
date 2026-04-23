@@ -1,0 +1,16 @@
+{
+  "name": "Reality Quest",
+  "short_name": "Reality Quest",
+  "description": "Изследователски приключения от истинския свят.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FBF7EF",
+  "theme_color": "#FBF7EF",
+  "lang": "bg",
+  "icons": [
+    { "src": "/placeholder.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/placeholder.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
