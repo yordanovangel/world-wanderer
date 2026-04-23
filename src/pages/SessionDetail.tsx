@@ -202,6 +202,16 @@ export default function SessionDetailPage() {
         </dl>
       </section>
 
+      {quest.creator_id === user?.id && quest.share_token && (
+        <button
+          type="button"
+          onClick={() => setShowShare(true)}
+          className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-forest-700 bg-white px-4 text-sm font-semibold text-forest-700 shadow-soft hover:bg-parchment-100"
+        >
+          <Share2 size={16} /> Сподели quest-а
+        </button>
+      )}
+
       {/* Per-task breakdown */}
       <section className="mt-6">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-500">
