@@ -75,12 +75,10 @@ const QUEST_TOOL = {
               max_points: { type: 'integer', enum: [10] },
             },
             required: ['order', 'title', 'description', 'hidden_criteria', 'max_points'],
-            additionalProperties: false,
           },
         },
       },
       required: ['title', 'description', 'tasks'],
-      additionalProperties: false,
     },
   },
 } as const;
