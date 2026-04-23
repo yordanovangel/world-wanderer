@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Settings, Plus } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
@@ -15,6 +15,7 @@ import { PastSessionRow } from '@/components/home/PastSessionRow';
 import { CreatedQuestRow } from '@/components/home/CreatedQuestRow';
 import { SectionError } from '@/components/home/SectionError';
 import { HorizontalSkeletons, RowSkeletons } from '@/components/home/Skeletons';
+import { toast } from '@/hooks/use-toast';
 
 type Status = 'loading' | 'ok' | 'error';
 
@@ -69,6 +70,34 @@ export default function HomePage() {
     [userId],
   );
 
+  const inProgressRef = useRef<HTMLElement | null>(null);
+  const resumeShownRef = useRef(false);
+
+  // One-time resume banner per visit when in-progress sessions exist.
+  useEffect(() => {
+    if (resumeShownRef.current) return;
+    if (inProgress.status !== 'ok') return;
+    const count = inProgress.data?.length ?? 0;
+    if (count === 0) return;
+    resumeShownRef.current = true;
+    toast({
+      title: `Имаш ${count} незавършен${count === 1 ? 'о' : 'и'} ${count === 1 ? 'приключение' : 'приключения'}`,
+      description: 'Натисни „Продължи", за да отидеш до тях.',
+      action: (
+        <button
+          type="button"
+          onClick={() =>
+            inProgressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+          className="ml-2 inline-flex h-8 items-center justify-center rounded-lg bg-terracotta-500 px-3 text-xs font-semibold text-parchment-50 shadow-soft hover:bg-terracotta-700"
+        >
+          Продължи
+        </button>
+      ) as any,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inProgress.status]);
+
   return (
     <div className="mx-auto w-full max-w-md">
       {/* Top bar */}
@@ -107,7 +136,7 @@ export default function HomePage() {
         {(inProgress.status === 'loading' ||
           inProgress.status === 'error' ||
           (inProgress.data && inProgress.data.length > 0)) && (
-          <section>
+          <section ref={inProgressRef} id="in-progress">
             <h2 className="mb-3 px-1 text-xs font-semibold uppercase tracking-wider text-ink-500">
               Продължи къде остана
             </h2>

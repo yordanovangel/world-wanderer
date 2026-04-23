@@ -7,6 +7,7 @@ import type { SessionSummary } from '@/lib/queries/home';
 import { ModeIcon } from '@/components/home/ModeIcon';
 import { formatDuration } from '@/lib/format';
 import { toast } from '@/hooks/use-toast';
+import { EmptyState } from '@/components/EmptyState';
 
 const PAGE_SIZE = 20;
 
@@ -142,17 +143,17 @@ export default function HistoryPage() {
       {/* List */}
       <section className="mt-6 space-y-2.5">
         {items.length === 0 && !loading && (
-          <div className="rounded-2xl border border-parchment-200 bg-white p-8 text-center shadow-soft">
-            <p className="text-base text-ink-700">
-              Още не си играл никой quest. Време е за приключение!
-            </p>
-            <Link
-              to="/create"
-              className="mt-5 inline-flex h-11 items-center justify-center rounded-xl bg-terracotta-500 px-5 text-sm font-semibold text-parchment-50 shadow-soft hover:bg-terracotta-700"
-            >
-              Нов quest
-            </Link>
-          </div>
+          <EmptyState
+            variant="no-quests"
+            action={
+              <Link
+                to="/create"
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-terracotta-500 px-5 text-sm font-semibold text-parchment-50 shadow-soft hover:bg-terracotta-700"
+              >
+                Нов quest
+              </Link>
+            }
+          />
         )}
         {items.map((s) => (
           <SessionRow key={s.session_id} s={s} />

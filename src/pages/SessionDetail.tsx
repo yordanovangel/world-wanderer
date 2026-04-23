@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Loader2, Trophy } from 'lucide-react';
+import { ArrowLeft, Loader2, Share2, Trophy } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { fetchSession, fetchSubmissions, fetchQuest, fetchPublicTasks, type Submission, type PublicTask, type Session, type Quest } from '@/lib/queries/quests';
 import { fetchQuestLeaderboard, signDownloadUrls, type LeaderboardRow } from '@/lib/queries/history';
 import { ModeIcon, MODE_LABEL } from '@/components/home/ModeIcon';
 import { formatDuration } from '@/lib/format';
 import { toast } from '@/hooks/use-toast';
+import { ShareModal } from '@/components/ShareModal';
 
 const STATUS_LABEL: Record<Session['status'], string> = {
   in_progress: 'В ход',
@@ -44,6 +45,7 @@ export default function SessionDetailPage() {
   const [thumbs, setThumbs] = useState<Record<string, string>>({}); // submission_id -> signed url
   const [leaderboard, setLeaderboard] = useState<LeaderboardRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showShare, setShowShare] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -200,6 +202,16 @@ export default function SessionDetailPage() {
         </dl>
       </section>
 
+      {quest.creator_id === user?.id && quest.share_token && (
+        <button
+          type="button"
+          onClick={() => setShowShare(true)}
+          className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-forest-700 bg-white px-4 text-sm font-semibold text-forest-700 shadow-soft hover:bg-parchment-100"
+        >
+          <Share2 size={16} /> Сподели quest-а
+        </button>
+      )}
+
       {/* Per-task breakdown */}
       <section className="mt-6">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-500">
@@ -302,6 +314,14 @@ export default function SessionDetailPage() {
             })}
           </ul>
         </section>
+      )}
+
+      {showShare && quest.share_token && (
+        <ShareModal
+          questTitle={quest.title}
+          shareToken={quest.share_token}
+          onClose={() => setShowShare(false)}
+        />
       )}
     </div>
   );

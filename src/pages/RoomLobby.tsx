@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { QRCodeSVG } from 'qrcode.react';
-import { Copy, LogOut, Play, Share2, Crown, Loader2 } from 'lucide-react';
+import { LogOut, Play, Share2, Crown, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/lib/auth-context';
 import { toast } from '@/hooks/use-toast';
@@ -13,6 +12,7 @@ import {
   fetchRoomPlayers,
   startMultiplayerRoom,
 } from '@/lib/queries/multiplayer';
+import { ShareModal } from '@/components/ShareModal';
 
 export default function RoomLobbyPage() {
   const { id: roomId } = useParams<{ id: string }>();
@@ -20,6 +20,7 @@ export default function RoomLobbyPage() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   const roomQ = useQuery({
     queryKey: ['room', roomId],
@@ -79,32 +80,7 @@ export default function RoomLobbyPage() {
     }
   }, [room, navigate]);
 
-  const shareUrl = useMemo(() => {
-    if (!questQ.data) return '';
-    return `${window.location.origin}/join/${questQ.data.share_token}`;
-  }, [questQ.data]);
-
-  const onCopy = async () => {
-    if (!shareUrl) return;
-    await navigator.clipboard.writeText(shareUrl);
-    toast({ title: 'Линкът е копиран' });
-  };
-  const onShare = async () => {
-    if (!shareUrl) return;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: questQ.data?.title ?? 'Roamquest',
-          text: 'Хайде да играем заедно!',
-          url: shareUrl,
-        });
-      } catch {
-        /* user cancelled */
-      }
-    } else {
-      onCopy();
-    }
-  };
+  const shareToken = questQ.data?.share_token ?? '';
 
   const onStart = async () => {
     if (!roomId || !isHost || playerCount < 2) return;
@@ -160,40 +136,14 @@ export default function RoomLobbyPage() {
         </p>
       </article>
 
-      {shareUrl && (
-        <section className="mt-5 rounded-2xl border border-parchment-200 bg-parchment-50 p-5 shadow-soft">
-          <div className="flex justify-center">
-            <div className="rounded-xl bg-white p-3 shadow-soft">
-              <QRCodeSVG
-                value={shareUrl}
-                size={200}
-                level="M"
-                marginSize={2}
-                fgColor="#7a3a1f"
-                bgColor="#fbf6ec"
-              />
-            </div>
-          </div>
-          <p className="mt-3 break-all rounded-lg bg-white px-3 py-2 text-center font-mono text-xs text-ink-700 shadow-soft">
-            {shareUrl}
-          </p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={onCopy}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-ink-900 shadow-soft hover:bg-parchment-100"
-            >
-              <Copy size={14} /> Копирай
-            </button>
-            <button
-              type="button"
-              onClick={onShare}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-ink-900 shadow-soft hover:bg-parchment-100"
-            >
-              <Share2 size={14} /> Сподели
-            </button>
-          </div>
-        </section>
+      {shareToken && (
+        <button
+          type="button"
+          onClick={() => setShowShare(true)}
+          className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-forest-700 bg-white px-4 text-sm font-semibold text-forest-700 shadow-soft hover:bg-parchment-100"
+        >
+          <Share2 size={16} /> Сподели стая (QR + линк)
+        </button>
       )}
 
       <section className="mt-5">
@@ -255,6 +205,14 @@ export default function RoomLobbyPage() {
         <p className="mt-8 text-center text-sm italic text-ink-500">
           Изчакваме host-а да стартира…
         </p>
+      )}
+
+      {showShare && shareToken && (
+        <ShareModal
+          questTitle={questQ.data?.title}
+          shareToken={shareToken}
+          onClose={() => setShowShare(false)}
+        />
       )}
     </div>
   );

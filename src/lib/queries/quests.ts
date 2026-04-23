@@ -128,6 +128,23 @@ export async function fetchSubmissions(session_id: string): Promise<Submission[]
   return (data ?? []) as unknown as Submission[];
 }
 
+export type ShareTokenLookup = {
+  quest_id: string;
+  title: string;
+  mode: 'solo' | 'multiplayer' | 'treasure_hunt';
+  status: 'draft' | 'published' | 'archived';
+};
+
+/** Public lookup of a share token (no auth required) — used by /join/:token. */
+export async function lookupShareToken(share_token: string): Promise<ShareTokenLookup> {
+  return invokeFn('lookup-share-token', { share_token });
+}
+
+/** Archive a quest (creator only). */
+export async function archiveQuest(quest_id: string): Promise<{ ok: boolean; status: string }> {
+  return invokeFn('archive-quest', { quest_id });
+}
+
 export async function fetchSourceImagePaths(quest_id: string): Promise<string[]> {
   const { data, error } = await supabase
     .from('quest_source_images' as any)

@@ -93,6 +93,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "multiplayer_rooms_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "users_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "multiplayer_rooms_quest_id_fkey"
             columns: ["quest_id"]
             isOneToOne: false
@@ -138,6 +145,13 @@ export type Database = {
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quest_sessions_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "users_public"
             referencedColumns: ["id"]
           },
           {
@@ -270,6 +284,13 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "quests_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "users_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       room_players: {
@@ -297,6 +318,13 @@ export type Database = {
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_players_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "users_public"
             referencedColumns: ["id"]
           },
           {
@@ -478,6 +506,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "quest_sessions_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "users_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "quest_sessions_quest_id_fkey"
             columns: ["quest_id"]
             isOneToOne: false
@@ -549,6 +584,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "quest_sessions_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "users_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "quest_sessions_quest_id_fkey"
             columns: ["quest_id"]
             isOneToOne: false
@@ -562,7 +604,35 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "quests_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "users_public"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      users_public: {
+        Row: {
+          created_at: string | null
+          id: string | null
+          last_login_at: string | null
+          nickname: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string | null
+          last_login_at?: string | null
+          nickname?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string | null
+          last_login_at?: string | null
+          nickname?: string | null
+        }
+        Relationships: []
       }
     }
     Functions: {
