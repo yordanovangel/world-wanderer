@@ -35,8 +35,21 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
 
   const JWT_SECRET = Deno.env.get('JWT_SECRET');
-  if (!JWT_SECRET || JWT_SECRET.length < 32) {
+  const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+  if (!JWT_SECRET || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('Missing env configuration', {
+      hasJwtSecret: !!JWT_SECRET,
+      jwtSecretLength: JWT_SECRET?.length ?? 0,
+      hasSupabaseUrl: !!SUPABASE_URL,
+      hasServiceRoleKey: !!SUPABASE_SERVICE_ROLE_KEY,
+    });
     return json({ error: 'Server misconfigured' }, 500);
+  }
+
+  if (JWT_SECRET.length < 32) {
+    console.warn('JWT_SECRET is shorter than recommended', { jwtSecretLength: JWT_SECRET.length });
   }
 
   let payload: any;
@@ -68,10 +81,7 @@ Deno.serve(async (req) => {
     return json({ error: 'PIN-ът трябва да е 4 цифри' }, 400);
   }
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-  );
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   // Verify both images exist
   const { data: imgs, error: imgErr } = await supabase
