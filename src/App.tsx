@@ -18,6 +18,7 @@ import QuestPlay from "./pages/QuestPlay.tsx";
 import RoomLobby from "./pages/RoomLobby.tsx";
 import RoomPlay from "./pages/RoomPlay.tsx";
 import Join from "./pages/Join.tsx";
+import DevTest from "./pages/DevTest.tsx";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,9 @@ const App = () => (
               <Route path="/room/:id/lobby" element={<ProtectedRoute><RoomLobby /></ProtectedRoute>} />
               <Route path="/room/:id/play" element={<ProtectedRoute><RoomPlay /></ProtectedRoute>} />
               <Route path="/join/:token" element={<Join />} />
+              {import.meta.env.DEV && (
+                <Route path="/dev-test" element={<ProtectedRoute><DevTest /></ProtectedRoute>} />
+              )}
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Route>
