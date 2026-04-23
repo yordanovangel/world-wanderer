@@ -91,9 +91,12 @@ Deno.serve(async (req) => {
     pathFn = () => `${userId}/${questId}/${crypto.randomUUID()}.jpg`;
   } else if (purpose === 'task_reference') {
     const questId = metadata.quest_id;
-    const taskId = metadata.task_id;
-    if (!questId || !UUID_RE.test(questId) || !taskId || !UUID_RE.test(taskId)) {
-      return json({ error: 'Missing or invalid quest_id/task_id' }, 400);
+    const taskId = metadata.task_id; // optional for treasure draft (task not yet created)
+    if (!questId || !UUID_RE.test(questId)) {
+      return json({ error: 'Missing or invalid quest_id' }, 400);
+    }
+    if (taskId && !UUID_RE.test(taskId)) {
+      return json({ error: 'Invalid task_id' }, 400);
     }
     const { data: q, error: qErr } = await supabase
       .from('quests')
@@ -107,7 +110,8 @@ Deno.serve(async (req) => {
     if (!q) return json({ error: 'Quest not found' }, 404);
     if (q.creator_id !== userId) return json({ error: 'Forbidden' }, 403);
     bucket = 'task-references';
-    pathFn = () => `${questId}/${taskId}/${crypto.randomUUID()}.jpg`;
+    const folderId = taskId ?? 'pending';
+    pathFn = () => `${questId}/${folderId}/${crypto.randomUUID()}.jpg`;
   } else {
     // task_submission
     const sessionId = metadata.session_id;
