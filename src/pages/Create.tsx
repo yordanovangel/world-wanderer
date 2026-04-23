@@ -72,11 +72,10 @@ export default function CreatePage() {
           subtitle="До 5 приятели се състезават на време и точки"
         />
         <ModeCard
+          to="/create/treasure/wizard"
           icon={<Map size={28} />}
           title="Съкровище"
-          subtitle="Създай treasure hunt за екипа си"
-          badge="Скоро"
-          disabled
+          subtitle="Снимай 10 обекта — приятелите ти ги намират по AI подсказки"
         />
       </div>
     </div>
