@@ -37,6 +37,12 @@ Deno.serve(async (req) => {
 
   const JWT_SECRET = Deno.env.get('JWT_SECRET');
   if (!JWT_SECRET || JWT_SECRET.length < 32) {
+    console.error('Server misconfigured', {
+      hasJwt: !!JWT_SECRET,
+      jwtLen: JWT_SECRET?.length ?? 0,
+      hasUrl: !!Deno.env.get('SUPABASE_URL'),
+      hasSrk: !!Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'),
+    });
     return json({ error: 'Server misconfigured' }, 500);
   }
 
