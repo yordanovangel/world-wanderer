@@ -77,10 +77,7 @@ Deno.serve(async (req) => {
     return json({ error: 'PIN-ът трябва да е 4 цифри' }, 400);
   }
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-  );
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   // Verify both images exist
   const { data: imgs, error: imgErr } = await supabase
