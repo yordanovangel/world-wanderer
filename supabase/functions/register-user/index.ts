@@ -35,7 +35,16 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
 
   const JWT_SECRET = Deno.env.get('JWT_SECRET');
-  if (!JWT_SECRET || JWT_SECRET.length < 32) {
+  const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+  if (!JWT_SECRET || JWT_SECRET.length < 32 || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('Missing env configuration', {
+      hasJwtSecret: !!JWT_SECRET,
+      jwtSecretLength: JWT_SECRET?.length ?? 0,
+      hasSupabaseUrl: !!SUPABASE_URL,
+      hasServiceRoleKey: !!SUPABASE_SERVICE_ROLE_KEY,
+    });
     return json({ error: 'Server misconfigured' }, 500);
   }
 
