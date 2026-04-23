@@ -37,7 +37,7 @@ export function ShareModal({ questTitle, shareToken, onClose }: Props) {
     if (typeof navigator !== 'undefined' && (navigator as any).share) {
       try {
         await (navigator as any).share({
-          title: questTitle ?? 'Roamquest',
+          title: questTitle ?? 'Reality Quest',
           text: questTitle ? `Хайде да играем "${questTitle}"!` : 'Хайде да играем заедно!',
           url: shareUrl,
         });
