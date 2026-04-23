@@ -20,6 +20,7 @@ export default function RoomLobbyPage() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   const roomQ = useQuery({
     queryKey: ['room', roomId],
@@ -79,34 +80,7 @@ export default function RoomLobbyPage() {
     }
   }, [room, navigate]);
 
-  const shareUrl = useMemo(() => {
-    if (!questQ.data) return '';
-    return `${window.location.origin}/join/${questQ.data.share_token}`;
-  }, [questQ.data]);
-
-  const onCopy = async () => {
-    if (!shareUrl) return;
-    await navigator.clipboard.writeText(shareUrl);
-    toast({ title: 'Линкът е копиран' });
-  };
-  const onShare = async () => {
-    if (!shareUrl) return;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: questQ.data?.title ?? 'Roamquest',
-          text: 'Хайде да играем заедно!',
-          url: shareUrl,
-        });
-      } catch {
-        /* user cancelled */
-      }
-    } else {
-      onCopy();
-    }
-  };
-
-  const onStart = async () => {
+  const shareToken = questQ.data?.share_token ?? '';
     if (!roomId || !isHost || playerCount < 2) return;
     setBusy(true);
     try {
