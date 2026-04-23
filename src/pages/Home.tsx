@@ -136,7 +136,7 @@ export default function HomePage() {
         {(inProgress.status === 'loading' ||
           inProgress.status === 'error' ||
           (inProgress.data && inProgress.data.length > 0)) && (
-          <section>
+          <section ref={inProgressRef} id="in-progress">
             <h2 className="mb-3 px-1 text-xs font-semibold uppercase tracking-wider text-ink-500">
               Продължи къде остана
             </h2>
