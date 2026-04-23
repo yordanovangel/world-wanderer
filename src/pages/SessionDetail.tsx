@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Loader2, Trophy } from 'lucide-react';
+import { ArrowLeft, Loader2, Share2, Trophy } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { fetchSession, fetchSubmissions, fetchQuest, fetchPublicTasks, type Submission, type PublicTask, type Session, type Quest } from '@/lib/queries/quests';
 import { fetchQuestLeaderboard, signDownloadUrls, type LeaderboardRow } from '@/lib/queries/history';
 import { ModeIcon, MODE_LABEL } from '@/components/home/ModeIcon';
 import { formatDuration } from '@/lib/format';
 import { toast } from '@/hooks/use-toast';
+import { ShareModal } from '@/components/ShareModal';
 
 const STATUS_LABEL: Record<Session['status'], string> = {
   in_progress: 'В ход',
@@ -44,6 +45,7 @@ export default function SessionDetailPage() {
   const [thumbs, setThumbs] = useState<Record<string, string>>({}); // submission_id -> signed url
   const [leaderboard, setLeaderboard] = useState<LeaderboardRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showShare, setShowShare] = useState(false);
 
   useEffect(() => {
     if (!id) return;
