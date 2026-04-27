@@ -145,6 +145,11 @@ export async function archiveQuest(quest_id: string): Promise<{ ok: boolean; sta
   return invokeFn('archive-quest', { quest_id });
 }
 
+/** Abandon an in-progress solo session (player only). */
+export async function abandonSession(session_id: string): Promise<{ ok: boolean; status: string }> {
+  return invokeFn('abandon-session', { session_id });
+}
+
 export async function fetchSourceImagePaths(quest_id: string): Promise<string[]> {
   const { data, error } = await supabase
     .from('quest_source_images' as any)
