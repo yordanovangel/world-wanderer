@@ -1,12 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft, Loader2, X } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { CameraCapture } from '@/components/CameraCapture';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useAuth } from '@/lib/auth-context';
 import { toast } from '@/hooks/use-toast';
 import {
+  abandonSession,
   fetchActiveSession,
   fetchPublicTasks,
   fetchQuest,
