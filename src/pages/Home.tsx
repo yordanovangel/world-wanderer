@@ -172,7 +172,11 @@ export default function HomePage() {
             ) : (
               <div className="space-y-2">
                 {past.data.map((s) => (
-                  <PastSessionRow key={s.session_id} s={s} />
+                  <PastSessionRow
+                    key={s.session_id}
+                    s={s}
+                    onDeleted={() => past.reload()}
+                  />
                 ))}
               </div>
             )

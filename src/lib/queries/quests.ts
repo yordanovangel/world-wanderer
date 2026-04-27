@@ -150,6 +150,11 @@ export async function abandonSession(session_id: string): Promise<{ ok: boolean;
   return invokeFn('abandon-session', { session_id });
 }
 
+/** Delete a finished/abandoned/expired session from the player's history. */
+export async function deleteSession(session_id: string): Promise<{ ok: boolean }> {
+  return invokeFn('delete-session', { session_id });
+}
+
 export async function fetchSourceImagePaths(quest_id: string): Promise<string[]> {
   const { data, error } = await supabase
     .from('quest_source_images' as any)
