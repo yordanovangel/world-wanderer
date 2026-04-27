@@ -35,7 +35,31 @@ export default function QuestPlayPage() {
   const { user } = useAuth();
   const [sessionId, setSessionId] = useState<string | null>(initialSessionId);
   const [bootstrapping, setBootstrapping] = useState(false);
+  const [confirmAbandon, setConfirmAbandon] = useState(false);
+  const [abandoning, setAbandoning] = useState(false);
+  const queryClient = useQueryClient();
   const { upload, isUploading } = useImageUpload('task_submission');
+
+  const onAbandon = async () => {
+    if (!sessionId) return;
+    setAbandoning(true);
+    try {
+      await abandonSession(sessionId);
+      await queryClient.invalidateQueries({ queryKey: ['home'] });
+      await queryClient.invalidateQueries({ queryKey: ['history'] });
+      toast({ title: 'Куестът е приключен' });
+      navigate('/home', { replace: true });
+    } catch (e: any) {
+      toast({
+        title: 'Не успяхме да откажем куеста',
+        description: e?.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setAbandoning(false);
+      setConfirmAbandon(false);
+    }
+  };
 
   // Resolve session: use param, else find active, else create one.
   useEffect(() => {
