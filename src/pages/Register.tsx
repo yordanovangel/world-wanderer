@@ -29,7 +29,13 @@ export default function RegisterPage() {
         img_b_id: b,
         pin,
       });
-      navigate('/home', { replace: true });
+      const after = sessionStorage.getItem('rq_after_login');
+      if (after) {
+        sessionStorage.removeItem('rq_after_login');
+        navigate(after, { replace: true });
+      } else {
+        navigate('/home', { replace: true });
+      }
     } catch (e: any) {
       setError(e?.message || 'Грешка при създаване на акаунт');
     } finally {
