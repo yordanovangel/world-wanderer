@@ -1,12 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft, Loader2, X } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { CameraCapture } from '@/components/CameraCapture';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useAuth } from '@/lib/auth-context';
 import { toast } from '@/hooks/use-toast';
 import {
+  abandonSession,
   fetchActiveSession,
   fetchPublicTasks,
   fetchQuest,
@@ -24,7 +35,31 @@ export default function QuestPlayPage() {
   const { user } = useAuth();
   const [sessionId, setSessionId] = useState<string | null>(initialSessionId);
   const [bootstrapping, setBootstrapping] = useState(false);
+  const [confirmAbandon, setConfirmAbandon] = useState(false);
+  const [abandoning, setAbandoning] = useState(false);
+  const queryClient = useQueryClient();
   const { upload, isUploading } = useImageUpload('task_submission');
+
+  const onAbandon = async () => {
+    if (!sessionId) return;
+    setAbandoning(true);
+    try {
+      await abandonSession(sessionId);
+      await queryClient.invalidateQueries({ queryKey: ['home'] });
+      await queryClient.invalidateQueries({ queryKey: ['history'] });
+      toast({ title: 'Куестът е приключен' });
+      navigate('/home', { replace: true });
+    } catch (e: any) {
+      toast({
+        title: 'Не успяхме да откажем куеста',
+        description: e?.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setAbandoning(false);
+      setConfirmAbandon(false);
+    }
+  };
 
   // Resolve session: use param, else find active, else create one.
   useEffect(() => {
@@ -127,9 +162,19 @@ export default function QuestPlayPage() {
         <Link to="/home" className="inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900">
           <ArrowLeft size={16} /> Назад
         </Link>
-        <span className="text-xs font-semibold uppercase tracking-wide text-ink-500">
-          Задача {progress.currentIndex + 1}/{total}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            Задача {progress.currentIndex + 1}/{total}
+          </span>
+          <button
+            type="button"
+            onClick={() => setConfirmAbandon(true)}
+            className="inline-flex h-9 min-w-[44px] items-center gap-1 rounded-lg px-2 text-xs font-medium text-ink-500 hover:bg-parchment-100 hover:text-danger-600"
+            aria-label="Откажи се от куеста"
+          >
+            <X size={14} /> Откажи се
+          </button>
+        </div>
       </div>
 
       <article className="mt-5 rounded-2xl border-l-4 border-terracotta-500 bg-parchment-50 p-5 shadow-soft">
@@ -159,6 +204,30 @@ export default function QuestPlayPage() {
           </p>
         )}
       </div>
+
+      <AlertDialog open={confirmAbandon} onOpenChange={setConfirmAbandon}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Сигурен ли си?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Куестът ще бъде маркиран като отказан. Прогресът ти ще бъде запазен в историята, но няма да можеш да го продължиш.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={abandoning}>Назад</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                onAbandon();
+              }}
+              disabled={abandoning}
+              className="bg-danger-600 text-parchment-50 hover:bg-danger-600/90"
+            >
+              {abandoning ? 'Отказване…' : 'Откажи се'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
