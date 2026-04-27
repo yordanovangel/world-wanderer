@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Trash2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { fetchSessionsPage, type SessionStatusFilter } from '@/lib/queries/history';
 import type { SessionSummary } from '@/lib/queries/home';
 import { ModeIcon } from '@/components/home/ModeIcon';
 import { formatDuration } from '@/lib/format';
+import { deleteSession } from '@/lib/queries/quests';
 import { toast } from '@/hooks/use-toast';
 import { EmptyState } from '@/components/EmptyState';
 
@@ -32,34 +33,70 @@ const STATUS_CLASS: Record<SessionSummary['status'], string> = {
   expired: 'bg-danger-200 text-danger-600',
 };
 
-function SessionRow({ s }: { s: SessionSummary }) {
+function SessionRow({ s, onDeleted }: { s: SessionSummary; onDeleted: (id: string) => void }) {
   const showScore = s.mode !== 'treasure_hunt' && s.status === 'completed';
+  const canDelete = s.status !== 'in_progress';
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!canDelete || deleting) return;
+    if (!confirm(`Изтрий "${s.quest_title}" от историята? Това действие е необратимо.`)) return;
+    setDeleting(true);
+    try {
+      await deleteSession(s.session_id);
+      onDeleted(s.session_id);
+      toast({ title: 'Сесията е изтрита' });
+    } catch (err: any) {
+      toast({
+        title: 'Грешка при изтриване',
+        description: err?.message,
+        variant: 'destructive',
+      });
+      setDeleting(false);
+    }
+  };
+
   return (
-    <Link
-      to={`/session/${s.session_id}/detail`}
-      className="flex items-center gap-3 rounded-2xl border border-parchment-200 bg-white p-4 shadow-soft transition hover:bg-parchment-100"
-    >
-      <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-parchment-100 text-forest-700">
-        <ModeIcon mode={s.mode} size={20} />
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="truncate font-display text-[17px] leading-tight text-ink-900">
-          {s.quest_title}
-        </p>
-        <span
-          className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_CLASS[s.status]}`}
-        >
-          {STATUS_LABEL[s.status]}
+    <div className="flex items-stretch gap-1">
+      <Link
+        to={`/session/${s.session_id}/detail`}
+        className="flex flex-1 items-center gap-3 rounded-2xl border border-parchment-200 bg-white p-4 shadow-soft transition hover:bg-parchment-100"
+      >
+        <span className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-parchment-100 text-forest-700">
+          <ModeIcon mode={s.mode} size={20} />
         </span>
-      </div>
-      <div className="text-right font-mono-rq text-sm text-ink-700">
-        {showScore
-          ? `${s.total_score} т.`
-          : s.status === 'completed'
-            ? formatDuration(s.duration_sec)
-            : `${s.submitted_tasks}/${s.total_tasks}`}
-      </div>
-    </Link>
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-display text-[17px] leading-tight text-ink-900">
+            {s.quest_title}
+          </p>
+          <span
+            className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_CLASS[s.status]}`}
+          >
+            {STATUS_LABEL[s.status]}
+          </span>
+        </div>
+        <div className="text-right font-mono-rq text-sm text-ink-700">
+          {showScore
+            ? `${s.total_score} т.`
+            : s.status === 'completed'
+              ? formatDuration(s.duration_sec)
+              : `${s.submitted_tasks}/${s.total_tasks}`}
+        </div>
+      </Link>
+      {canDelete && (
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={deleting}
+          aria-label="Изтрий сесията"
+          className="inline-flex w-11 flex-none items-center justify-center rounded-2xl border border-parchment-200 bg-white text-ink-500 shadow-soft transition hover:bg-danger-200/40 hover:text-danger-600 disabled:opacity-50"
+        >
+          {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -156,7 +193,11 @@ export default function HistoryPage() {
           />
         )}
         {items.map((s) => (
-          <SessionRow key={s.session_id} s={s} />
+          <SessionRow
+            key={s.session_id}
+            s={s}
+            onDeleted={(id) => setItems((prev) => prev.filter((x) => x.session_id !== id))}
+          />
         ))}
         {loading && (
           <div className="flex justify-center py-4 text-ink-500">
