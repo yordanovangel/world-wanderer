@@ -5,7 +5,7 @@ import bcrypt from 'https://esm.sh/bcryptjs@2.4.3';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
+    'authorization, x-client-info, apikey, content-type, x-language, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
@@ -98,6 +98,10 @@ Deno.serve(async (req) => {
 
   const pin_hash = await bcrypt.hash(pin, 10);
 
+  // Optional language preference from client (defaults to 'bg' via column default)
+  const langInput = payload?.language;
+  const language: 'bg' | 'en' = langInput === 'en' ? 'en' : 'bg';
+
   const { data: inserted, error: insErr } = await supabase
     .from('users')
     .insert({
@@ -105,8 +109,9 @@ Deno.serve(async (req) => {
       img_a_id,
       img_b_id,
       pin_hash,
+      language,
     })
-    .select('id, nickname')
+    .select('id, nickname, language')
     .single();
 
   if (insErr) {
@@ -122,5 +127,5 @@ Deno.serve(async (req) => {
   }
 
   const token = await signToken(inserted.id, JWT_SECRET);
-  return json({ token, user_id: inserted.id, nickname: inserted.nickname });
+  return json({ token, user_id: inserted.id, nickname: inserted.nickname, language: inserted.language || 'bg' });
 });
