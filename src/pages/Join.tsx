@@ -48,7 +48,7 @@ export default function JoinPage() {
     }
     if (!user) {
       sessionStorage.setItem('rq_after_login', `/join/${token}`);
-      navigate('/login', { replace: true });
+      navigate('/register', { replace: true });
       return;
     }
     let cancelled = false;
