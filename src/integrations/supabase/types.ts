@@ -444,6 +444,7 @@ export type Database = {
           id: string
           img_a_id: string
           img_b_id: string
+          language: string
           last_login_at: string | null
           nickname: string | null
           pin_hash: string
@@ -453,6 +454,7 @@ export type Database = {
           id?: string
           img_a_id: string
           img_b_id: string
+          language?: string
           last_login_at?: string | null
           nickname?: string | null
           pin_hash: string
@@ -462,6 +464,7 @@ export type Database = {
           id?: string
           img_a_id?: string
           img_b_id?: string
+          language?: string
           last_login_at?: string | null
           nickname?: string | null
           pin_hash?: string

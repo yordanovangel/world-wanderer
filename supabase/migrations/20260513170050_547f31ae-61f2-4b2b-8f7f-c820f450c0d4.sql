@@ -1,0 +1,1 @@
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS language text NOT NULL DEFAULT 'bg' CHECK (language IN ('bg','en'));
