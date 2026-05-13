@@ -3,6 +3,7 @@ import { Compass } from 'lucide-react';
 import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth-context';
+import { LanguageToggle } from '@/components/LanguageToggle';
 import featureSolo from '@/assets/feature-solo.jpg';
 import featureMulti from '@/assets/feature-multi.jpg';
 import featureTreasure from '@/assets/feature-treasure.jpg';
@@ -67,6 +68,7 @@ const Splash = () => {
 
   return (
     <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col px-6 py-8 rq-grain">
+      <LanguageToggle className="absolute right-5 top-5 z-10" />
       <div className="w-full pt-6 text-center animate-fade-slide-up">
         <div className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-terracotta-500 text-parchment-50 shadow-card">
           <Compass size={28} strokeWidth={2} />
