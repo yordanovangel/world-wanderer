@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, getUserLang } from '../_shared/auth.ts';
 import { compareImages } from '../_shared/treasure-ai.ts';
 
 const SUBMISSION_BUCKET = 'task-submissions';
@@ -102,9 +102,10 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'Не можахме да заредим снимката' }, 500);
   }
 
+  const lang = await getUserLang(supabase, userId);
   let result;
   try {
-    result = await compareImages(refSigned.data.signedUrl, subSigned.data.signedUrl);
+    result = await compareImages(refSigned.data.signedUrl, subSigned.data.signedUrl, { lang });
   } catch (e: any) {
     console.error('compare ai', e?.message, e?.body);
     if (e?.status === 429) return jsonResponse({ error: 'AI системата е заета.' }, 429);
