@@ -198,9 +198,10 @@
     "cantJoin": "Не може да се присъединиш",
     "toHome": "Към началото",
     "invitation": "Покана за приключение",
-    "afterLogin": "След login ще влезеш в quest „{{title}}\".",
+    "afterLogin": "След регистрация ще влезеш в quest „{{title}}\".",
     "redirecting": "Пренасочваме те…",
-    "toLogin": "Към login →",
+    "toRegister": "Създай нов акаунт →",
+    "toLogin": "Вече имам акаунт →",
     "joiningTo": "Присъединяваме те към „{{title}}\"…",
     "joining": "Присъединяваме те…"
   },

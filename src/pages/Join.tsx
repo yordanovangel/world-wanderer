@@ -48,7 +48,7 @@ export default function JoinPage() {
     }
     if (!user) {
       sessionStorage.setItem('rq_after_login', `/join/${token}`);
-      navigate('/login', { replace: true });
+      navigate('/register', { replace: true });
       return;
     }
     let cancelled = false;
@@ -95,7 +95,10 @@ export default function JoinPage() {
         <p className="mt-6 inline-flex items-center gap-2 text-sm text-ink-500">
           <Loader2 className="h-4 w-4 animate-spin" /> {t('join.redirecting')}
         </p>
-        <Link to="/login" className="mt-6 block text-sm text-forest-700 hover:underline">
+        <Link to="/register" className="mt-6 block text-sm font-semibold text-terracotta-500 hover:underline">
+          {t('join.toRegister')}
+        </Link>
+        <Link to="/login" className="mt-2 block text-sm text-forest-700 hover:underline">
           {t('join.toLogin')}
         </Link>
       </div>
