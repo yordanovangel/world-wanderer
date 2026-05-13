@@ -3,6 +3,7 @@ import { Compass } from 'lucide-react';
 import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth-context';
+import { LanguageToggle } from '@/components/LanguageToggle';
 import featureSolo from '@/assets/feature-solo.jpg';
 import featureMulti from '@/assets/feature-multi.jpg';
 import featureTreasure from '@/assets/feature-treasure.jpg';
