@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, getUserLang } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, getUserLang, locFn } from '../_shared/auth.ts';
 import { generateHint } from '../_shared/treasure-ai.ts';
 
 Deno.serve(async (req) => {
@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
     typeof body?.creator_context === 'string' ? body.creator_context.trim() : undefined;
 
   if (!taskId || !UUID_RE.test(taskId)) {
-    return jsonResponse({ error: 'Невалиден task_id' }, 400);
+    return jsonResponse({ error: locFn(req, 'Невалиден task_id', 'Invalid task_id') }, 400);
   }
 
   const supabase = createClient(
@@ -31,26 +31,26 @@ Deno.serve(async (req) => {
     .select('id, quest_id, creator_context, regenerations_used')
     .eq('id', taskId)
     .maybeSingle();
-  if (!task) return jsonResponse({ error: 'Задачата не съществува' }, 404);
+  if (!task) return jsonResponse({ error: locFn(req, 'Задачата не съществува', 'Task doesn\'t exist') }, 404);
 
   const { data: quest } = await supabase
     .from('quests')
     .select('creator_id, status, mode')
     .eq('id', task.quest_id)
     .maybeSingle();
-  if (!quest) return jsonResponse({ error: 'Quest не съществува' }, 404);
+  if (!quest) return jsonResponse({ error: locFn(req, 'Quest не съществува', 'Quest doesn\'t exist') }, 404);
   if (quest.creator_id !== userId) return jsonResponse({ error: 'Forbidden' }, 403);
   if (quest.status !== 'draft') {
-    return jsonResponse({ error: 'Quest-ът вече е публикуван' }, 409);
+    return jsonResponse({ error: locFn(req, 'Quest-ът вече е публикуван', 'Quest is already published') }, 409);
   }
 
   if ((task.regenerations_used ?? 0) >= 3) {
-    return jsonResponse({ error: 'Няма повече опити за тази задача' }, 429);
+    return jsonResponse({ error: locFn(req, 'Няма повече опити за тази задача', 'No more attempts for this task') }, 429);
   }
 
   const ctx = (newContext && newContext.length >= 3 ? newContext : task.creator_context) ?? '';
   if (ctx.length < 3) {
-    return jsonResponse({ error: 'Липсва описание' }, 400);
+    return jsonResponse({ error: locFn(req, 'Липсва описание', 'Description is missing') }, 400);
   }
 
   const lang = await getUserLang(supabase, userId);
@@ -59,9 +59,9 @@ Deno.serve(async (req) => {
     hint = await generateHint(ctx, { temperature: 0.9, lang });
   } catch (e: any) {
     console.error('regenerate hint', e?.message, e?.body);
-    if (e?.status === 429) return jsonResponse({ error: 'AI системата е заета.' }, 429);
-    if (e?.status === 402) return jsonResponse({ error: 'Изчерпан AI кредит.' }, 402);
-    return jsonResponse({ error: 'AI не успя да генерира подсказка.' }, 502);
+    if (e?.status === 429) return jsonResponse({ error: locFn(req, 'AI системата е заета.', 'AI is busy.') }, 429);
+    if (e?.status === 402) return jsonResponse({ error: locFn(req, 'Изчерпан AI кредит.', 'AI credits exhausted.') }, 402);
+    return jsonResponse({ error: locFn(req, 'AI не успя да генерира подсказка.', 'AI failed to generate a hint.') }, 502);
   }
 
   const newCount = (task.regenerations_used ?? 0) + 1;
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
     .eq('id', taskId);
   if (upErr) {
     console.error('update task', upErr);
-    return jsonResponse({ error: 'Не успяхме да обновим задачата' }, 500);
+    return jsonResponse({ error: locFn(req, 'Не успяхме да обновим задачата', 'Couldn\'t update the task') }, 500);
   }
 
   return jsonResponse({ hint, regenerations_remaining: Math.max(0, 3 - newCount) });

@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, getUserLang } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, getUserLang, locFn } from '../_shared/auth.ts';
 import { generateHint } from '../_shared/treasure-ai.ts';
 
 Deno.serve(async (req) => {
@@ -19,13 +19,13 @@ Deno.serve(async (req) => {
   const creatorContext: string = (body?.creator_context ?? '').toString().trim();
 
   if (!questId || !UUID_RE.test(questId)) {
-    return jsonResponse({ error: 'Невалиден quest_id' }, 400);
+    return jsonResponse({ error: locFn(req, 'Невалиден quest_id', 'Invalid quest_id') }, 400);
   }
   if (typeof referencePath !== 'string' || referencePath.length === 0) {
-    return jsonResponse({ error: 'Липсва референтна снимка' }, 400);
+    return jsonResponse({ error: locFn(req, 'Липсва референтна снимка', 'Reference photo is missing') }, 400);
   }
   if (creatorContext.length < 3) {
-    return jsonResponse({ error: 'Опиши обекта (поне 3 символа)' }, 400);
+    return jsonResponse({ error: locFn(req, 'Опиши обекта (поне 3 символа)', 'Describe the object (at least 3 characters)') }, 400);
   }
 
   const supabase = createClient(
@@ -38,10 +38,10 @@ Deno.serve(async (req) => {
     .select('id, creator_id, mode, status')
     .eq('id', questId)
     .maybeSingle();
-  if (!quest) return jsonResponse({ error: 'Quest не съществува' }, 404);
+  if (!quest) return jsonResponse({ error: locFn(req, 'Quest не съществува', 'Quest doesn\'t exist') }, 404);
   if (quest.creator_id !== userId) return jsonResponse({ error: 'Forbidden' }, 403);
   if (quest.mode !== 'treasure_hunt' || quest.status !== 'draft') {
-    return jsonResponse({ error: 'Quest-ът не е чернова' }, 409);
+    return jsonResponse({ error: locFn(req, 'Quest-ът не е чернова', 'Quest is not a draft') }, 409);
   }
 
   // Cap at 10 tasks
@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
     .select('*', { count: 'exact', head: true })
     .eq('quest_id', questId);
   if ((existingCount ?? 0) >= 10) {
-    return jsonResponse({ error: 'Имаш максимум 10 задачи' }, 409);
+    return jsonResponse({ error: locFn(req, 'Имаш максимум 10 задачи', 'You have a maximum of 10 tasks') }, 409);
   }
 
   const lang = await getUserLang(supabase, userId);
@@ -59,9 +59,9 @@ Deno.serve(async (req) => {
     hint = await generateHint(creatorContext, { lang });
   } catch (e: any) {
     console.error('generate hint', e?.message, e?.body);
-    if (e?.status === 429) return jsonResponse({ error: 'AI системата е заета.' }, 429);
-    if (e?.status === 402) return jsonResponse({ error: 'Изчерпан AI кредит.' }, 402);
-    return jsonResponse({ error: 'AI не успя да генерира подсказка.' }, 502);
+    if (e?.status === 429) return jsonResponse({ error: locFn(req, 'AI системата е заета.', 'AI is busy.') }, 429);
+    if (e?.status === 402) return jsonResponse({ error: locFn(req, 'Изчерпан AI кредит.', 'AI credits exhausted.') }, 402);
+    return jsonResponse({ error: locFn(req, 'AI не успя да генерира подсказка.', 'AI failed to generate a hint.') }, 502);
   }
 
   const orderIdx = (existingCount ?? 0) + 1;
@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
 
   if (insErr || !inserted) {
     console.error('insert task', insErr);
-    return jsonResponse({ error: 'Не успяхме да запазим задачата' }, 500);
+    return jsonResponse({ error: locFn(req, 'Не успяхме да запазим задачата', 'Couldn\'t save the task') }, 500);
   }
 
   return jsonResponse({

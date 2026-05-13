@@ -1,3 +1,4 @@
+import { locFn } from '../_shared/auth.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { jwtVerify } from 'https://esm.sh/jose@5.9.4';
 
@@ -57,7 +58,7 @@ Deno.serve(async (req) => {
 
   const questId: string = payload?.quest_id;
   if (!questId || !UUID_RE.test(questId)) {
-    return json({ error: 'Невалиден quest_id' }, 400);
+    return json({ error: locFn(req, 'Невалиден quest_id', 'Invalid quest_id') }, 400);
   }
 
   const supabase = createClient(
@@ -74,7 +75,7 @@ Deno.serve(async (req) => {
     console.error('quest lookup', qErr);
     return json({ error: 'Database error' }, 500);
   }
-  if (!quest) return json({ error: 'Quest не съществува' }, 404);
+  if (!quest) return json({ error: locFn(req, 'Quest не съществува', 'Quest doesn\'t exist') }, 404);
 
   // Reuse existing in-progress session if present
   const { data: existing, error: exErr } = await supabase
@@ -101,7 +102,7 @@ Deno.serve(async (req) => {
     return json({ error: 'Database error' }, 500);
   }
   if (!tasks || tasks.length === 0) {
-    return json({ error: 'Quest-ът няма задачи' }, 400);
+    return json({ error: locFn(req, 'Quest-ът няма задачи', 'Quest has no tasks') }, 400);
   }
 
   const taskOrder = tasks.map((t: any) => t.id);
@@ -118,7 +119,7 @@ Deno.serve(async (req) => {
     .single();
   if (cErr || !created) {
     console.error('create session', cErr);
-    return json({ error: 'Не успяхме да създадем сесия' }, 500);
+    return json({ error: locFn(req, 'Не успяхме да създадем сесия', 'Couldn\'t create a session') }, 500);
   }
 
   return json({ session_id: created.id, resumed: false });

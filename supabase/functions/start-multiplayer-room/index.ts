@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, locFn } from '../_shared/auth.ts';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
   let body: any;
   try { body = await req.json(); } catch { return jsonResponse({ error: 'Invalid JSON' }, 400); }
   const roomId: string = body?.room_id;
-  if (!roomId || !UUID_RE.test(roomId)) return jsonResponse({ error: 'Невалиден room_id' }, 400);
+  if (!roomId || !UUID_RE.test(roomId)) return jsonResponse({ error: locFn(req, 'Невалиден room_id', 'Invalid room_id') }, 400);
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -25,15 +25,15 @@ Deno.serve(async (req) => {
     .select('id, host_id, status, quest_id')
     .eq('id', roomId)
     .maybeSingle();
-  if (!room) return jsonResponse({ error: 'Стаята не съществува' }, 404);
-  if (room.host_id !== userId) return jsonResponse({ error: 'Само host-ът може да стартира' }, 403);
-  if (room.status !== 'lobby') return jsonResponse({ error: 'Стаята вече не е в lobby' }, 409);
+  if (!room) return jsonResponse({ error: locFn(req, 'Стаята не съществува', 'Room doesn\'t exist') }, 404);
+  if (room.host_id !== userId) return jsonResponse({ error: locFn(req, 'Само host-ът може да стартира', 'Only the host can start') }, 403);
+  if (room.status !== 'lobby') return jsonResponse({ error: locFn(req, 'Стаята вече не е в lobby', 'Room is no longer in the lobby') }, 409);
 
   const { count: playerCount } = await supabase
     .from('room_players')
     .select('*', { count: 'exact', head: true })
     .eq('room_id', roomId);
-  if ((playerCount ?? 0) < 2) return jsonResponse({ error: 'Нужни са поне 2 играчи' }, 400);
+  if ((playerCount ?? 0) < 2) return jsonResponse({ error: locFn(req, 'Нужни са поне 2 играчи', 'At least 2 players required') }, 400);
 
   const startedAt = new Date().toISOString();
   const { error: upErr } = await supabase
@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     .update({ status: 'in_progress', started_at: startedAt })
     .eq('id', roomId)
     .eq('status', 'lobby');
-  if (upErr) return jsonResponse({ error: 'Не успяхме да стартираме' }, 500);
+  if (upErr) return jsonResponse({ error: locFn(req, 'Не успяхме да стартираме', 'Couldn\'t start') }, 500);
 
   return jsonResponse({ started_at: startedAt });
 });

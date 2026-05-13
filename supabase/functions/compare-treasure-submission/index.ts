@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, getUserLang } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, getUserLang, locFn } from '../_shared/auth.ts';
 import { compareImages } from '../_shared/treasure-ai.ts';
 
 const SUBMISSION_BUCKET = 'task-submissions';
@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
     typeof submissionPath !== 'string' ||
     !submissionPath.startsWith(`${sessionId}/${taskId}/`)
   ) {
-    return jsonResponse({ error: 'Невалидни входни данни' }, 400);
+    return jsonResponse({ error: locFn(req, 'Невалидни входни данни', 'Invalid input') }, 400);
   }
 
   const supabase = createClient(
@@ -41,19 +41,19 @@ Deno.serve(async (req) => {
     .select('id, quest_id, player_id, status, task_order')
     .eq('id', sessionId)
     .maybeSingle();
-  if (!session) return jsonResponse({ error: 'Сесията не съществува' }, 404);
+  if (!session) return jsonResponse({ error: locFn(req, 'Сесията не съществува', 'Session doesn\'t exist') }, 404);
   if (session.player_id !== userId) return jsonResponse({ error: 'Forbidden' }, 403);
-  if (session.status !== 'in_progress') return jsonResponse({ error: 'Сесията не е активна' }, 409);
+  if (session.status !== 'in_progress') return jsonResponse({ error: locFn(req, 'Сесията не е активна', 'Session is not active') }, 409);
 
   const { data: task } = await supabase
     .from('quest_tasks')
     .select('id, quest_id, reference_image_path, order_idx')
     .eq('id', taskId)
     .maybeSingle();
-  if (!task) return jsonResponse({ error: 'Задачата не съществува' }, 404);
+  if (!task) return jsonResponse({ error: locFn(req, 'Задачата не съществува', 'Task doesn\'t exist') }, 404);
   if (task.quest_id !== session.quest_id) return jsonResponse({ error: 'Forbidden' }, 403);
   if (!task.reference_image_path) {
-    return jsonResponse({ error: 'Задачата няма референтна снимка' }, 400);
+    return jsonResponse({ error: locFn(req, 'Задачата няма референтна снимка', 'Task has no reference photo') }, 400);
   }
 
   // Sequential check: load all tasks for this quest in player's order, find current task index.
@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
 
   const myIndex = orderedIds.indexOf(taskId);
   if (myIndex === -1) {
-    return jsonResponse({ error: 'Задачата не е в тази сесия' }, 400);
+    return jsonResponse({ error: locFn(req, 'Задачата не е в тази сесия', 'Task is not in this session') }, 400);
   }
 
   // Get all matched submissions (is_match=true) so far for this session
@@ -80,12 +80,12 @@ Deno.serve(async (req) => {
   // All previous tasks in order must be matched
   for (let i = 0; i < myIndex; i++) {
     if (!matchedTasks.has(orderedIds[i])) {
-      return jsonResponse({ error: 'Трябва да решиш предишните задачи първо' }, 409);
+      return jsonResponse({ error: locFn(req, 'Трябва да решиш предишните задачи първо', 'You must solve the previous tasks first') }, 409);
     }
   }
   // Already matched? Don't allow more
   if (matchedTasks.has(taskId)) {
-    return jsonResponse({ error: 'Вече намери този обект' }, 409);
+    return jsonResponse({ error: locFn(req, 'Вече намери този обект', 'You already found this object') }, 409);
   }
 
   // Sign download URLs for both images
@@ -95,11 +95,11 @@ Deno.serve(async (req) => {
   ]);
   if (refSigned.error || !refSigned.data?.signedUrl) {
     console.error('sign ref', refSigned.error);
-    return jsonResponse({ error: 'Не можахме да заредим референцията' }, 500);
+    return jsonResponse({ error: locFn(req, 'Не можахме да заредим референцията', 'Couldn\'t load the reference') }, 500);
   }
   if (subSigned.error || !subSigned.data?.signedUrl) {
     console.error('sign sub', subSigned.error);
-    return jsonResponse({ error: 'Не можахме да заредим снимката' }, 500);
+    return jsonResponse({ error: locFn(req, 'Не можахме да заредим снимката', 'Couldn\'t load the photo') }, 500);
   }
 
   const lang = await getUserLang(supabase, userId);
@@ -108,9 +108,9 @@ Deno.serve(async (req) => {
     result = await compareImages(refSigned.data.signedUrl, subSigned.data.signedUrl, { lang });
   } catch (e: any) {
     console.error('compare ai', e?.message, e?.body);
-    if (e?.status === 429) return jsonResponse({ error: 'AI системата е заета.' }, 429);
-    if (e?.status === 402) return jsonResponse({ error: 'Изчерпан AI кредит.' }, 402);
-    return jsonResponse({ error: 'AI не успя да сравни снимките.' }, 502);
+    if (e?.status === 429) return jsonResponse({ error: locFn(req, 'AI системата е заета.', 'AI is busy.') }, 429);
+    if (e?.status === 402) return jsonResponse({ error: locFn(req, 'Изчерпан AI кредит.', 'AI credits exhausted.') }, 402);
+    return jsonResponse({ error: locFn(req, 'AI не успя да сравни снимките.', 'AI failed to compare the photos.') }, 502);
   }
 
   const accepted = result.match && result.confidence >= MATCH_CONFIDENCE_THRESHOLD && !result.fraud_suspected;
@@ -136,7 +136,7 @@ Deno.serve(async (req) => {
   });
   if (insErr) {
     console.error('insert submission', insErr);
-    return jsonResponse({ error: 'Не успяхме да запазим резултата' }, 500);
+    return jsonResponse({ error: locFn(req, 'Не успяхме да запазим резултата', 'Couldn\'t save the result') }, 500);
   }
 
   let sessionCompleted = false;

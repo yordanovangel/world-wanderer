@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, locFn } from '../_shared/auth.ts';
 
 /**
  * Create a multiplayer room for a freshly generated multiplayer quest and
@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
   }
   const questId: string = body?.quest_id;
   if (!questId || !UUID_RE.test(questId)) {
-    return jsonResponse({ error: 'Невалиден quest_id' }, 400);
+    return jsonResponse({ error: locFn(req, 'Невалиден quest_id', 'Invalid quest_id') }, 400);
   }
 
   const supabase = createClient(
@@ -38,8 +38,8 @@ Deno.serve(async (req) => {
     .eq('id', questId)
     .maybeSingle();
   if (qErr) return jsonResponse({ error: 'Database error' }, 500);
-  if (!quest) return jsonResponse({ error: 'Quest не съществува' }, 404);
-  if (quest.mode !== 'multiplayer') return jsonResponse({ error: 'Този quest не е мултиплеър' }, 400);
+  if (!quest) return jsonResponse({ error: locFn(req, 'Quest не съществува', 'Quest doesn\'t exist') }, 404);
+  if (quest.mode !== 'multiplayer') return jsonResponse({ error: locFn(req, 'Този quest не е мултиплеър', 'This quest is not multiplayer') }, 400);
   if (quest.creator_id !== userId) return jsonResponse({ error: 'Forbidden' }, 403);
 
   // Reuse existing lobby room if any
@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     .single();
   if (rErr || !room) {
     console.error('create room', rErr);
-    return jsonResponse({ error: 'Не успяхме да създадем стая' }, 500);
+    return jsonResponse({ error: locFn(req, 'Не успяхме да създадем стая', 'Couldn\'t create the room') }, 500);
   }
 
   // Add host as first player + session
@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
     .single();
   if (sErr || !session) {
     console.error('create host session', sErr);
-    return jsonResponse({ error: 'Не успяхме да създадем сесия' }, 500);
+    return jsonResponse({ error: locFn(req, 'Не успяхме да създадем сесия', 'Couldn\'t create a session') }, 500);
   }
 
   await supabase.from('room_players').insert({

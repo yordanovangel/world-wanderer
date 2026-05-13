@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, verifyAppJwt, UUID_RE } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, verifyAppJwt, UUID_RE, locFn } from '../_shared/auth.ts';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
     .eq('id', questId)
     .maybeSingle();
   if (qErr) return jsonResponse({ error: qErr.message }, 500);
-  if (!quest) return jsonResponse({ error: 'Quest не съществува' }, 404);
+  if (!quest) return jsonResponse({ error: locFn(req, 'Quest не съществува', 'Quest doesn\'t exist') }, 404);
   if (quest.creator_id !== userId) return jsonResponse({ error: 'Forbidden' }, 403);
   if (quest.status === 'archived') return jsonResponse({ ok: true, status: 'archived' });
 

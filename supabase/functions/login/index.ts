@@ -1,3 +1,4 @@
+import { locFn } from '../_shared/auth.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { SignJWT } from 'https://esm.sh/jose@5.9.4';
 import bcrypt from 'https://esm.sh/bcryptjs@2.4.3';
@@ -13,7 +14,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const PIN_RE = /^\d{4}$/;
 const RATE_LIMIT_WINDOW_SEC = 60;
 const RATE_LIMIT_MAX_FAILS = 5;
-const GENERIC_ERROR = 'Грешна комбинация — опитай отново';
+const GENERIC_ERROR = locFn(req, 'Грешна комбинация — опитай отново', 'Wrong combination — try again');
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -56,10 +57,10 @@ Deno.serve(async (req) => {
 
   let { img_a_id, img_b_id, pin } = payload ?? {};
   if (!img_a_id || !img_b_id || !UUID_RE.test(img_a_id) || !UUID_RE.test(img_b_id)) {
-    return json({ error: 'Невалидни картинки' }, 400);
+    return json({ error: locFn(req, 'Невалидни картинки', 'Invalid images') }, 400);
   }
   if (!pin || !PIN_RE.test(pin)) {
-    return json({ error: 'PIN-ът трябва да е 4 цифри' }, 400);
+    return json({ error: locFn(req, 'PIN-ът трябва да е 4 цифри', 'PIN must be 4 digits') }, 400);
   }
   // Normalize on the server side too (defense in depth)
   if (img_a_id > img_b_id) {
@@ -90,7 +91,7 @@ Deno.serve(async (req) => {
     // Fail open on lookup errors — but log
   } else if ((failCount ?? 0) >= RATE_LIMIT_MAX_FAILS) {
     return json(
-      { error: 'Прекалено много опити. Изчакай малко и пробвай отново.' },
+      { error: locFn(req, 'Прекалено много опити. Изчакай малко и пробвай отново.', 'Too many attempts. Please wait and try again.') },
       429,
     );
   }

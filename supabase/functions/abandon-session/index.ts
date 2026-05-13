@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, verifyAppJwt, UUID_RE } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, verifyAppJwt, UUID_RE, locFn } from '../_shared/auth.ts';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -30,11 +30,11 @@ Deno.serve(async (req) => {
     .eq('id', sessionId)
     .maybeSingle();
   if (sErr) return jsonResponse({ error: sErr.message }, 500);
-  if (!session) return jsonResponse({ error: 'Сесията не съществува' }, 404);
+  if (!session) return jsonResponse({ error: locFn(req, 'Сесията не съществува', 'Session doesn\'t exist') }, 404);
   if (session.player_id !== userId) return jsonResponse({ error: 'Forbidden' }, 403);
   if (session.status === 'abandoned') return jsonResponse({ ok: true, status: 'abandoned' });
   if (session.status !== 'in_progress') {
-    return jsonResponse({ error: 'Сесията вече е приключена' }, 409);
+    return jsonResponse({ error: locFn(req, 'Сесията вече е приключена', 'Session is already finished') }, 409);
   }
 
   const { error: uErr } = await supabase
