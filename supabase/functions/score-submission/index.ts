@@ -1,10 +1,11 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { jwtVerify } from 'https://esm.sh/jose@5.9.4';
+import { getUserLang, type Lang } from '../_shared/auth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
+    'authorization, x-client-info, apikey, content-type, x-language, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
@@ -13,6 +14,9 @@ const SIGNED_TTL_SEC = 600;
 const MAX_ATTEMPTS = 2;
 const AI_MODEL = 'google/gemini-2.5-pro';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const langName = (l: Lang) => (l === 'en' ? 'English' : 'Bulgarian');
+const errMsg = (l: Lang, bg: string, en: string) => (l === 'en' ? en : bg);
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -33,29 +37,30 @@ async function verifyAppJwt(authHeader: string | null, secret: string): Promise<
   }
 }
 
-const SCORE_TOOL = {
-  type: 'function',
-  function: {
-    name: 'score_photo',
-    description: 'Score the submitted photo against the hidden criteria.',
-    parameters: {
-      type: 'object',
-      properties: {
-        score: { type: 'integer', minimum: 0, maximum: 10 },
-        reasoning: {
-          type: 'string',
-          description: 'One short sentence in Bulgarian for the user',
+const buildScoreTool = (lang: Lang) =>
+  ({
+    type: 'function',
+    function: {
+      name: 'score_photo',
+      description: 'Score the submitted photo against the hidden criteria.',
+      parameters: {
+        type: 'object',
+        properties: {
+          score: { type: 'integer', minimum: 0, maximum: 10 },
+          reasoning: {
+            type: 'string',
+            description: `One short sentence in ${langName(lang)} for the user`,
+          },
+          suspected_fraud: {
+            type: 'boolean',
+            description: 'True if the photo looks like a screenshot or downloaded image',
+          },
         },
-        suspected_fraud: {
-          type: 'boolean',
-          description: 'True if the photo looks like a screenshot or downloaded image',
-        },
+        required: ['score', 'reasoning', 'suspected_fraud'],
+        additionalProperties: false,
       },
-      required: ['score', 'reasoning', 'suspected_fraud'],
-      additionalProperties: false,
     },
-  },
-} as const;
+  }) as const;
 
 type ScoreResult = {
   score: number;
@@ -63,7 +68,7 @@ type ScoreResult = {
   suspected_fraud: boolean;
 };
 
-function buildSystemPrompt(taskDescription: string, hiddenCriteria: string): string {
+function buildSystemPrompt(taskDescription: string, hiddenCriteria: string, lang: Lang): string {
   return `You are evaluating a user's photo against specific criteria.
 
 TASK (public): ${taskDescription}
@@ -79,10 +84,10 @@ Score 0-10:
   7-9 = good match, most criteria met
   10 = perfect match, all criteria clearly satisfied
 
-Use the score_photo tool. Reasoning must be ONE short sentence in Bulgarian for the player.`;
+Use the score_photo tool. Reasoning MUST be ONE short sentence written in ${langName(lang)} for the player.`;
 }
 
-async function callAi(systemPrompt: string, signedImageUrl: string): Promise<ScoreResult> {
+async function callAi(systemPrompt: string, signedImageUrl: string, lang: Lang): Promise<ScoreResult> {
   const apiKey = Deno.env.get('LOVABLE_API_KEY');
   if (!apiKey) throw new Error('LOVABLE_API_KEY missing');
 
@@ -94,11 +99,11 @@ async function callAi(systemPrompt: string, signedImageUrl: string): Promise<Sco
         role: 'user',
         content: [
           { type: 'image_url', image_url: { url: signedImageUrl } },
-          { type: 'text', text: 'Evaluate this submission and use the score_photo tool.' },
+          { type: 'text', text: `Evaluate this submission and use the score_photo tool. Reply in ${langName(lang)}.` },
         ],
       },
     ],
-    tools: [SCORE_TOOL],
+    tools: [buildScoreTool(lang)],
     tool_choice: { type: 'function', function: { name: 'score_photo' } },
   };
 
@@ -157,6 +162,12 @@ Deno.serve(async (req) => {
     return json({ error: 'Invalid JSON' }, 400);
   }
 
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  );
+  const lang = await getUserLang(supabase, userId);
+
   const sessionId: string = payload?.session_id;
   const taskId: string = payload?.task_id;
   const submissionPath: string = payload?.submission_path;
@@ -168,13 +179,8 @@ Deno.serve(async (req) => {
     typeof submissionPath !== 'string' ||
     !submissionPath.startsWith(`${sessionId}/${taskId}/`)
   ) {
-    return json({ error: 'Невалидни входни данни' }, 400);
+    return json({ error: errMsg(lang, 'Невалидни входни данни', 'Invalid input') }, 400);
   }
-
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-  );
 
   // Load session
   const { data: session, error: sErr } = await supabase
@@ -186,10 +192,10 @@ Deno.serve(async (req) => {
     console.error('session lookup', sErr);
     return json({ error: 'Database error' }, 500);
   }
-  if (!session) return json({ error: 'Сесията не съществува' }, 404);
+  if (!session) return json({ error: errMsg(lang, 'Сесията не съществува', 'Session does not exist') }, 404);
   if (session.player_id !== userId) return json({ error: 'Forbidden' }, 403);
   if (session.status !== 'in_progress') {
-    return json({ error: 'Сесията не е активна' }, 409);
+    return json({ error: errMsg(lang, 'Сесията не е активна', 'Session is not active') }, 409);
   }
 
   // Load task (with hidden criteria — server-side only)
@@ -202,10 +208,10 @@ Deno.serve(async (req) => {
     console.error('task lookup', tErr);
     return json({ error: 'Database error' }, 500);
   }
-  if (!task) return json({ error: 'Задачата не съществува' }, 404);
+  if (!task) return json({ error: errMsg(lang, 'Задачата не съществува', 'Task does not exist') }, 404);
   if (task.quest_id !== session.quest_id) return json({ error: 'Forbidden' }, 403);
   if (!task.hidden_criteria) {
-    return json({ error: 'Тази задача не се оценява автоматично' }, 400);
+    return json({ error: errMsg(lang, 'Тази задача не се оценява автоматично', 'This task is not auto-scored') }, 400);
   }
 
   // Multiplayer time-limit check (skip if not in a room)
@@ -228,7 +234,7 @@ Deno.serve(async (req) => {
       const deadline =
         new Date(room.started_at).getTime() + quest.time_limit_sec * 1000;
       if (Date.now() > deadline) {
-        return json({ error: 'Времето изтече' }, 410);
+        return json({ error: errMsg(lang, 'Времето изтече', 'Time expired') }, 410);
       }
     }
   }
@@ -244,7 +250,7 @@ Deno.serve(async (req) => {
     return json({ error: 'Database error' }, 500);
   }
   if ((existingAttempts ?? 0) >= MAX_ATTEMPTS) {
-    return json({ error: 'Няма повече опити за тази задача' }, 409);
+    return json({ error: errMsg(lang, 'Няма повече опити за тази задача', 'No more attempts for this task') }, 409);
   }
   const attemptNo = (existingAttempts ?? 0) + 1;
 
@@ -254,23 +260,23 @@ Deno.serve(async (req) => {
     .createSignedUrl(submissionPath, SIGNED_TTL_SEC);
   if (signErr || !signed?.signedUrl) {
     console.error('sign submission', signErr);
-    return json({ error: 'Не можахме да подготвим снимката' }, 500);
+    return json({ error: errMsg(lang, 'Не можахме да подготвим снимката', "Couldn't prepare the photo") }, 500);
   }
 
-  const systemPrompt = buildSystemPrompt(task.description, task.hidden_criteria);
+  const systemPrompt = buildSystemPrompt(task.description, task.hidden_criteria, lang);
 
   let result: ScoreResult;
   try {
-    result = await callAi(systemPrompt, signed.signedUrl);
+    result = await callAi(systemPrompt, signed.signedUrl, lang);
   } catch (e: any) {
     console.error('ai 1', e?.message, e?.body);
-    if (e?.status === 429) return json({ error: 'AI системата е заета.' }, 429);
-    if (e?.status === 402) return json({ error: 'Изчерпан AI кредит.' }, 402);
+    if (e?.status === 429) return json({ error: errMsg(lang, 'AI системата е заета.', 'AI is busy.') }, 429);
+    if (e?.status === 402) return json({ error: errMsg(lang, 'Изчерпан AI кредит.', 'AI credits exhausted.') }, 402);
     try {
-      result = await callAi(systemPrompt, signed.signedUrl);
+      result = await callAi(systemPrompt, signed.signedUrl, lang);
     } catch (e2: any) {
       console.error('ai 2', e2?.message);
-      return json({ error: 'AI не успя да оцени снимката. Опитай пак.' }, 502);
+      return json({ error: errMsg(lang, 'AI не успя да оцени снимката. Опитай пак.', 'AI failed to score the photo. Try again.') }, 502);
     }
   }
 
@@ -287,7 +293,7 @@ Deno.serve(async (req) => {
   });
   if (insErr) {
     console.error('insert submission', insErr);
-    return json({ error: 'Не успяхме да запазим резултата' }, 500);
+    return json({ error: errMsg(lang, 'Не успяхме да запазим резултата', "Couldn't save the result") }, 500);
   }
 
   // Check completion: count distinct task_ids whose best score >= 6 OR have 2 attempts

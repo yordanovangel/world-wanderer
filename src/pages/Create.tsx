@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Compass, Map, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type ModeCardProps = {
   to?: string;
@@ -34,9 +35,7 @@ function ModeCard({ to, icon, title, subtitle, badge, disabled }: ModeCardProps)
     </div>
   );
 
-  if (disabled || !to) {
-    return <div aria-disabled="true">{inner}</div>;
-  }
+  if (disabled || !to) return <div aria-disabled="true">{inner}</div>;
   return (
     <Link to={to} className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta-500 rounded-2xl">
       {inner}
@@ -45,38 +44,21 @@ function ModeCard({ to, icon, title, subtitle, badge, disabled }: ModeCardProps)
 }
 
 export default function CreatePage() {
+  const { t } = useTranslation();
   return (
     <div className="mx-auto w-full max-w-md px-5 pb-10 pt-6">
-      <Link
-        to="/home"
-        className="inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900"
-      >
-        <ArrowLeft size={16} /> Назад
+      <Link to="/home" className="inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900">
+        <ArrowLeft size={16} /> {t('common.back')}
       </Link>
       <header className="mt-4">
-        <h1 className="font-display text-[28px] leading-tight text-ink-900">Създай куест</h1>
-        <p className="mt-1 text-sm text-ink-500">Избери режим, за да започнеш.</p>
+        <h1 className="font-display text-[28px] leading-tight text-ink-900">{t('create.title')}</h1>
+        <p className="mt-1 text-sm text-ink-500">{t('create.subtitle')}</p>
       </header>
 
       <div className="mt-6 space-y-3">
-        <ModeCard
-          to="/create/solo/capture"
-          icon={<Compass size={28} />}
-          title="Самостоятелен"
-          subtitle="Заснеми околността и получи 4–11 мини-задачи от AI"
-        />
-        <ModeCard
-          to="/create/multi/capture"
-          icon={<Users size={28} />}
-          title="Мултиплеър"
-          subtitle="До 5 приятели се състезават на време и точки"
-        />
-        <ModeCard
-          to="/create/treasure/wizard"
-          icon={<Map size={28} />}
-          title="Съкровище"
-          subtitle="Снимай 10 обекта — приятелите ти ги намират по AI подсказки"
-        />
+        <ModeCard to="/create/solo/capture" icon={<Compass size={28} />} title={t('create.solo.title')} subtitle={t('create.solo.desc')} />
+        <ModeCard to="/create/multi/capture" icon={<Users size={28} />} title={t('create.multi.title')} subtitle={t('create.multi.desc')} />
+        <ModeCard to="/create/treasure/wizard" icon={<Map size={28} />} title={t('create.treasure.title')} subtitle={t('create.treasure.desc')} />
       </div>
     </div>
   );

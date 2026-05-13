@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, getUserLang } from '../_shared/auth.ts';
 import { generateHint } from '../_shared/treasure-ai.ts';
 
 Deno.serve(async (req) => {
@@ -53,9 +53,10 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: 'Липсва описание' }, 400);
   }
 
+  const lang = await getUserLang(supabase, userId);
   let hint: string;
   try {
-    hint = await generateHint(ctx, { temperature: 0.9 });
+    hint = await generateHint(ctx, { temperature: 0.9, lang });
   } catch (e: any) {
     console.error('regenerate hint', e?.message, e?.body);
     if (e?.status === 429) return jsonResponse({ error: 'AI системата е заета.' }, 429);

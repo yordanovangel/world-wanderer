@@ -1,0 +1,310 @@
+{
+  "common": {
+    "back": "Назад",
+    "cancel": "Отказ",
+    "save": "Запази",
+    "delete": "Изтрий",
+    "loading": "Зареждане…",
+    "error": "Грешка",
+    "retry": "Опитай пак",
+    "next": "Напред",
+    "skip": "Пропусни",
+    "continue": "Продължи",
+    "close": "Затвори",
+    "ok": "ОК",
+    "loadMore": "Зареди още",
+    "comingSoon": "Очаквайте скоро",
+    "yes": "Да",
+    "no": "Не",
+    "points": "т.",
+    "of": "от",
+    "loadFailed": "Не можахме да заредим"
+  },
+  "tabs": {
+    "home": "Начало",
+    "create": "Създай",
+    "history": "История",
+    "profile": "Профил",
+    "mainNav": "Основна навигация"
+  },
+  "splash": {
+    "tagline": "Изследвай света около теб. Снимай. Открий. Играй.",
+    "whatAwaits": "Какво те очаква",
+    "start": "Започни приключение",
+    "haveAccount": "Вече имам профил",
+    "version": "v0.2 · етап 2",
+    "slides": {
+      "solo": { "title": "Соло куест", "desc": "AI създава лични мисии от твоите снимки." },
+      "multi": { "title": "Мултиплейър", "desc": "До 5 играчи, една карта, едно време." },
+      "treasure": { "title": "Търсене на съкровище", "desc": "Подреди следи. Поведи приятели." },
+      "journal": { "title": "Дневник", "desc": "Спомени от всяко приключение." }
+    },
+    "show": "Покажи {{title}}"
+  },
+  "auth": {
+    "register": {
+      "title": "Започни експедицията",
+      "subtitle": "Избери две картинки и 4-цифрен код",
+      "nicknamePlaceholder": "Как да те наричаме? (по избор)",
+      "submit": "Създай акаунт",
+      "submitting": "Създаване…",
+      "haveAccount": "Вече имаш акаунт? Влез →",
+      "noRecovery": "Запомни добре картинките и кода — няма recovery!",
+      "errorFallback": "Грешка при създаване на акаунт"
+    },
+    "login": {
+      "title": "Влез в експедицията",
+      "subtitle": "Избери двете си картинки и въведи PIN",
+      "submit": "Влез",
+      "submitting": "Вход…",
+      "noAccount": "Нов играч? Създай акаунт →",
+      "errorFallback": "Грешка при вход"
+    },
+    "pinLabel": "Твоят 4-цифрен PIN",
+    "pickTwoImages": "Избери две картинки",
+    "selected": "Избрани: {{n}}/2",
+    "tapToDeselect": "Натисни отново, за да отмаркираш",
+    "imagesLoadFailed": "Не успяхме да заредим картинките",
+    "pinDigit": "PIN цифра {{n}}"
+  },
+  "home": {
+    "greeting": "Здрасти, {{name}}",
+    "fallbackName": "изследователю",
+    "settings": "Настройки",
+    "heroTitle": "Какво ще откриеш днес?",
+    "heroSubtitle": "Започни ново приключение или продължи оставено",
+    "newQuest": "Нов quest",
+    "inProgress": "Продължи къде остана",
+    "myGames": "Моите игри",
+    "myQuests": "Моите quest-ове",
+    "viewAll": "Виж всички →",
+    "noPlays": "Още не си играл никой quest. Натисни „+ Нов quest\" да започнеш.",
+    "resumeToastTitle_one": "Имаш {{count}} незавършено приключение",
+    "resumeToastTitle_other": "Имаш {{count}} незавършени приключения",
+    "resumeToastDesc": "Натисни „Продължи\", за да отидеш до тях.",
+    "resume": "Продължи"
+  },
+  "profile": {
+    "title": "Профил",
+    "noNickname": "Без прякор",
+    "played": "Играни",
+    "created": "Създадени",
+    "xp": "XP",
+    "myQuests": "Моите quest-ове",
+    "noCreatedYet": "Още не си създал quest.",
+    "continueArrow": "Продължи →",
+    "settings": "Настройки",
+    "darkMode": "Тъмна тема (вечер)",
+    "soon": "Скоро",
+    "darkSoonTitle": "Тъмна тема — скоро",
+    "darkSoonDesc": "Работим по нея.",
+    "clearLocal": "Изчисти локални данни",
+    "confirmClear": "Сигурен ли си? Това ще изтрие чернови и draft tokens.",
+    "clearedToast": "Локалните данни са изчистени",
+    "logout": "Излез",
+    "language": "Език",
+    "loadFailedTitle": "Не успяхме да заредим профила",
+    "draft": "Чернова",
+    "archived": "Архив",
+    "published": "Публикуван"
+  },
+  "create": {
+    "title": "Създай куест",
+    "subtitle": "Избери режим, за да започнеш.",
+    "solo": { "title": "Самостоятелен", "desc": "Заснеми околността и получи 4–11 мини-задачи от AI" },
+    "multi": { "title": "Мултиплеър", "desc": "До 5 приятели се състезават на време и точки" },
+    "treasure": { "title": "Съкровище", "desc": "Снимай 10 обекта — приятелите ти ги намират по AI подсказки" }
+  },
+  "history": {
+    "title": "Моите игри",
+    "filterAria": "Филтър",
+    "tabs": { "all": "Всички", "completed": "Завършени", "in_progress": "В процес", "expired": "Изтекли" },
+    "status": { "in_progress": "В ход", "completed": "Завършен", "abandoned": "Изоставен", "expired": "Изтекъл" },
+    "newQuest": "Нов quest",
+    "deleteAria": "Изтрий сесията",
+    "confirmDelete": "Изтрий „{{title}}\" от историята? Това действие е необратимо.",
+    "deletedToast": "Сесията е изтрита",
+    "deleteErrorTitle": "Грешка при изтриване",
+    "loadErrorTitle": "Не успяхме да заредим историята",
+    "loadMoreErrorTitle": "Не успяхме да заредим още"
+  },
+  "mode": { "solo": "Соло", "multiplayer": "Мултиплейър", "treasure_hunt": "Съкровище" },
+  "join": {
+    "errors": { "not_found": "Този quest не съществува", "archived": "Quest-ът е архивиран", "invalid_link": "Невалиден линк", "fail": "Не успяхме да те присъединим" },
+    "cantJoin": "Не може да се присъединиш",
+    "toHome": "Към началото",
+    "invitation": "Покана за приключение",
+    "afterLogin": "След login ще влезеш в quest „{{title}}\".",
+    "redirecting": "Пренасочваме те…",
+    "toLogin": "Към login →",
+    "joiningTo": "Присъединяваме те към „{{title}}\"…",
+    "joining": "Присъединяваме те…"
+  },
+  "camera": {
+    "permission": "Разреши достъп до камерата",
+    "permissionDenied": "Достъпът е отказан",
+    "useFile": "Качи снимка от устройството",
+    "capture": "Заснеми",
+    "retake": "Повтори",
+    "switchCamera": "Смени камерата",
+    "useUpload": "Качи файл вместо това",
+    "starting": "Стартираме камерата…",
+    "errorTitle": "Грешка с камерата"
+  },
+  "image": {
+    "uploading": "Качване…",
+    "uploadFailed": "Качването се провали",
+    "tooLarge": "Файлът е твърде голям",
+    "invalidType": "Невалиден файлов тип",
+    "remove": "Премахни",
+    "preview": "Преглед"
+  },
+  "share": {
+    "title": "Сподели приключение",
+    "linkCopied": "Линкът е копиран",
+    "copy": "Копирай линка",
+    "shareNative": "Сподели",
+    "qrAlt": "QR код"
+  },
+  "quest": {
+    "intro": {
+      "loading": "Зареждаме quest-а…",
+      "tasks_one": "{{count}} задача",
+      "tasks_other": "{{count}} задачи",
+      "start": "Започни",
+      "back": "Назад",
+      "loadFailed": "Не можахме да заредим quest-а"
+    },
+    "play": {
+      "task": "Задача {{current}} от {{total}}",
+      "progress": "{{done}} от {{total}}",
+      "submit": "Изпрати снимка",
+      "abandon": "Откажи се",
+      "abandonConfirm": "Сигурен ли си, че искаш да откажеш?",
+      "abandonErrorTitle": "Грешка при отказ",
+      "loading": "Зареждаме…"
+    },
+    "scoring": {
+      "title": "Оценяваме снимката…",
+      "subtitle": "AI преглежда и поставя точки.",
+      "errorTitle": "Грешка при оценяване"
+    },
+    "result": {
+      "matchYes": "Удачно",
+      "matchNo": "Не съвпада",
+      "yourScore": "Твоят резултат",
+      "feedback": "Обратна връзка",
+      "next": "Следваща задача",
+      "finish": "Завърши quest"
+    },
+    "complete": {
+      "title": "Готово! 🎉",
+      "subtitle": "Завърши quest-а.",
+      "totalScore": "Общ резултат",
+      "duration": "Време",
+      "toHome": "Към началото",
+      "shareResults": "Сподели резултата"
+    },
+    "leaderboard": {
+      "title": "Класация",
+      "noPlays": "Все още няма играни сесии.",
+      "share": "Сподели quest",
+      "loadFailed": "Не можахме да заредим класацията"
+    }
+  },
+  "solo": {
+    "captureTitle": "Заснеми околността",
+    "captureSubtitle": "Качи 3–8 снимки. AI ще създаде задачи от тях.",
+    "addPhoto": "Добави снимка",
+    "create": "Създай quest",
+    "creating": "Създаваме…",
+    "needMore": "Качи поне 3 снимки",
+    "errorTitle": "Грешка при създаване"
+  },
+  "multi": {
+    "captureTitle": "Заснеми за мултиплейър",
+    "configTitle": "Настройки",
+    "maxPlayers": "Максимален брой играчи",
+    "timeLimit": "Времево ограничение (мин)",
+    "create": "Създай стая",
+    "creating": "Създаваме…",
+    "errorTitle": "Грешка"
+  },
+  "room": {
+    "lobby": {
+      "title": "Лоби",
+      "waiting": "Чакаме играчи…",
+      "host": "Домакин",
+      "start": "Стартирай",
+      "starting": "Стартираме…",
+      "cancel": "Откажи стая",
+      "share": "Сподели линк",
+      "leave": "Излез",
+      "errorStart": "Не успяхме да стартираме",
+      "loadFailed": "Не можахме да заредим стаята"
+    },
+    "play": { "title": "В играта", "loading": "Зареждаме стаята…" },
+    "results": {
+      "title": "Резултати",
+      "rank": "Място",
+      "score": "Точки",
+      "toHome": "Към началото",
+      "share": "Сподели"
+    }
+  },
+  "treasure": {
+    "wizard": {
+      "title": "Създай търсене на съкровище",
+      "step": "Стъпка {{current}} от {{total}}",
+      "addObject": "Добави обект",
+      "describe": "Опиши обекта (какво е и къде се намира)",
+      "describePlaceholder": "Напр. „Стара чешма пред входа на парка\"",
+      "regenerate": "Прегенерирай подсказка",
+      "regenerationsLeft": "Остават {{n}} прегенерирания",
+      "saveTask": "Запази задача",
+      "delete": "Изтрий обект",
+      "preview": "Преглед",
+      "publish": "Публикувай",
+      "publishing": "Публикуваме…",
+      "draftSaved": "Черновата е запазена",
+      "minTasks": "Добави поне 3 обекта",
+      "maxTasks": "Достигна максимума от 10 обекта",
+      "errorTitle": "Грешка",
+      "hint": "AI подсказка"
+    },
+    "preview": {
+      "title": "Преглед",
+      "publish": "Публикувай",
+      "edit": "Редактирай"
+    },
+    "play": {
+      "title": "Намери съкровището",
+      "hint": "Подсказка",
+      "submit": "Изпрати снимка",
+      "attempt": "Опит {{n}}",
+      "loading": "Зареждаме…"
+    },
+    "scoring": {
+      "title": "Сравняваме снимките…",
+      "subtitle": "AI проверява дали си намерил съкровището.",
+      "match": "Намери съкровището! 🎉",
+      "noMatch": "Не съвпада",
+      "next": "Следваща следа",
+      "finish": "Завърши"
+    }
+  },
+  "session": {
+    "detail": {
+      "title": "Детайли",
+      "tasks": "Задачи",
+      "totalScore": "Общ резултат",
+      "duration": "Време",
+      "playAgain": "Играй пак",
+      "loadFailed": "Не можахме да заредим сесията"
+    }
+  },
+  "empty": {
+    "noQuests": "Все още нямаш игри",
+    "noQuestsDesc": "Започни първото си приключение."
+  }
+}

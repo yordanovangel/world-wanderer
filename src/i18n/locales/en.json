@@ -1,0 +1,310 @@
+{
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "loading": "Loading…",
+    "error": "Error",
+    "retry": "Try again",
+    "next": "Next",
+    "skip": "Skip",
+    "continue": "Continue",
+    "close": "Close",
+    "ok": "OK",
+    "loadMore": "Load more",
+    "comingSoon": "Coming soon",
+    "yes": "Yes",
+    "no": "No",
+    "points": "pts",
+    "of": "of",
+    "loadFailed": "Couldn't load"
+  },
+  "tabs": {
+    "home": "Home",
+    "create": "Create",
+    "history": "History",
+    "profile": "Profile",
+    "mainNav": "Main navigation"
+  },
+  "splash": {
+    "tagline": "Explore the world around you. Snap. Discover. Play.",
+    "whatAwaits": "What's inside",
+    "start": "Start an adventure",
+    "haveAccount": "I already have an account",
+    "version": "v0.2 · stage 2",
+    "slides": {
+      "solo": { "title": "Solo quest", "desc": "AI turns your photos into personal missions." },
+      "multi": { "title": "Multiplayer", "desc": "Up to 5 players, one map, one timer." },
+      "treasure": { "title": "Treasure hunt", "desc": "Lay clues. Lead your friends." },
+      "journal": { "title": "Journal", "desc": "Memories from every adventure." }
+    },
+    "show": "Show {{title}}"
+  },
+  "auth": {
+    "register": {
+      "title": "Begin your expedition",
+      "subtitle": "Pick two images and a 4-digit code",
+      "nicknamePlaceholder": "What should we call you? (optional)",
+      "submit": "Create account",
+      "submitting": "Creating…",
+      "haveAccount": "Already have an account? Sign in →",
+      "noRecovery": "Memorize your images and code well — there is no recovery!",
+      "errorFallback": "Failed to create account"
+    },
+    "login": {
+      "title": "Enter the expedition",
+      "subtitle": "Pick your two images and enter your PIN",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "New player? Create account →",
+      "errorFallback": "Sign-in error"
+    },
+    "pinLabel": "Your 4-digit PIN",
+    "pickTwoImages": "Pick two images",
+    "selected": "Selected: {{n}}/2",
+    "tapToDeselect": "Tap again to deselect",
+    "imagesLoadFailed": "Couldn't load the images",
+    "pinDigit": "PIN digit {{n}}"
+  },
+  "home": {
+    "greeting": "Hi, {{name}}",
+    "fallbackName": "explorer",
+    "settings": "Settings",
+    "heroTitle": "What will you discover today?",
+    "heroSubtitle": "Start a new adventure or pick up where you left off",
+    "newQuest": "New quest",
+    "inProgress": "Pick up where you left off",
+    "myGames": "My games",
+    "myQuests": "My quests",
+    "viewAll": "View all →",
+    "noPlays": "You haven't played any quests yet. Tap \"+ New quest\" to begin.",
+    "resumeToastTitle_one": "You have {{count}} unfinished adventure",
+    "resumeToastTitle_other": "You have {{count}} unfinished adventures",
+    "resumeToastDesc": "Tap \"Resume\" to jump back in.",
+    "resume": "Resume"
+  },
+  "profile": {
+    "title": "Profile",
+    "noNickname": "No nickname",
+    "played": "Played",
+    "created": "Created",
+    "xp": "XP",
+    "myQuests": "My quests",
+    "noCreatedYet": "You haven't created any quests yet.",
+    "continueArrow": "Continue →",
+    "settings": "Settings",
+    "darkMode": "Dark mode (evening)",
+    "soon": "Soon",
+    "darkSoonTitle": "Dark mode — coming soon",
+    "darkSoonDesc": "We're working on it.",
+    "clearLocal": "Clear local data",
+    "confirmClear": "Are you sure? This will erase drafts and draft tokens.",
+    "clearedToast": "Local data cleared",
+    "logout": "Sign out",
+    "language": "Language",
+    "loadFailedTitle": "Couldn't load profile",
+    "draft": "Draft",
+    "archived": "Archived",
+    "published": "Published"
+  },
+  "create": {
+    "title": "Create a quest",
+    "subtitle": "Pick a mode to begin.",
+    "solo": { "title": "Solo", "desc": "Photograph your surroundings and get 4–11 mini-tasks from AI" },
+    "multi": { "title": "Multiplayer", "desc": "Up to 5 friends compete on time and points" },
+    "treasure": { "title": "Treasure hunt", "desc": "Photograph 10 objects — your friends find them with AI hints" }
+  },
+  "history": {
+    "title": "My games",
+    "filterAria": "Filter",
+    "tabs": { "all": "All", "completed": "Completed", "in_progress": "In progress", "expired": "Expired" },
+    "status": { "in_progress": "In progress", "completed": "Completed", "abandoned": "Abandoned", "expired": "Expired" },
+    "newQuest": "New quest",
+    "deleteAria": "Delete session",
+    "confirmDelete": "Delete \"{{title}}\" from history? This action cannot be undone.",
+    "deletedToast": "Session deleted",
+    "deleteErrorTitle": "Error deleting",
+    "loadErrorTitle": "Couldn't load history",
+    "loadMoreErrorTitle": "Couldn't load more"
+  },
+  "mode": { "solo": "Solo", "multiplayer": "Multiplayer", "treasure_hunt": "Treasure" },
+  "join": {
+    "errors": { "not_found": "This quest doesn't exist", "archived": "The quest is archived", "invalid_link": "Invalid link", "fail": "Couldn't join you" },
+    "cantJoin": "Can't join",
+    "toHome": "Back to home",
+    "invitation": "Adventure invitation",
+    "afterLogin": "After signing in you'll join the quest \"{{title}}\".",
+    "redirecting": "Redirecting…",
+    "toLogin": "To login →",
+    "joiningTo": "Joining you to \"{{title}}\"…",
+    "joining": "Joining you…"
+  },
+  "camera": {
+    "permission": "Allow camera access",
+    "permissionDenied": "Access denied",
+    "useFile": "Upload a photo from device",
+    "capture": "Capture",
+    "retake": "Retake",
+    "switchCamera": "Switch camera",
+    "useUpload": "Upload a file instead",
+    "starting": "Starting camera…",
+    "errorTitle": "Camera error"
+  },
+  "image": {
+    "uploading": "Uploading…",
+    "uploadFailed": "Upload failed",
+    "tooLarge": "File too large",
+    "invalidType": "Invalid file type",
+    "remove": "Remove",
+    "preview": "Preview"
+  },
+  "share": {
+    "title": "Share adventure",
+    "linkCopied": "Link copied",
+    "copy": "Copy link",
+    "shareNative": "Share",
+    "qrAlt": "QR code"
+  },
+  "quest": {
+    "intro": {
+      "loading": "Loading the quest…",
+      "tasks_one": "{{count}} task",
+      "tasks_other": "{{count}} tasks",
+      "start": "Start",
+      "back": "Back",
+      "loadFailed": "Couldn't load the quest"
+    },
+    "play": {
+      "task": "Task {{current}} of {{total}}",
+      "progress": "{{done}} of {{total}}",
+      "submit": "Submit photo",
+      "abandon": "Abandon",
+      "abandonConfirm": "Are you sure you want to abandon?",
+      "abandonErrorTitle": "Error abandoning",
+      "loading": "Loading…"
+    },
+    "scoring": {
+      "title": "Scoring your photo…",
+      "subtitle": "AI is reviewing and assigning points.",
+      "errorTitle": "Scoring error"
+    },
+    "result": {
+      "matchYes": "Match",
+      "matchNo": "No match",
+      "yourScore": "Your score",
+      "feedback": "Feedback",
+      "next": "Next task",
+      "finish": "Finish quest"
+    },
+    "complete": {
+      "title": "Done! 🎉",
+      "subtitle": "Quest completed.",
+      "totalScore": "Total score",
+      "duration": "Time",
+      "toHome": "Back to home",
+      "shareResults": "Share results"
+    },
+    "leaderboard": {
+      "title": "Leaderboard",
+      "noPlays": "No sessions played yet.",
+      "share": "Share quest",
+      "loadFailed": "Couldn't load leaderboard"
+    }
+  },
+  "solo": {
+    "captureTitle": "Photograph your surroundings",
+    "captureSubtitle": "Upload 3–8 photos. AI will create tasks from them.",
+    "addPhoto": "Add photo",
+    "create": "Create quest",
+    "creating": "Creating…",
+    "needMore": "Upload at least 3 photos",
+    "errorTitle": "Creation error"
+  },
+  "multi": {
+    "captureTitle": "Capture for multiplayer",
+    "configTitle": "Settings",
+    "maxPlayers": "Max players",
+    "timeLimit": "Time limit (min)",
+    "create": "Create room",
+    "creating": "Creating…",
+    "errorTitle": "Error"
+  },
+  "room": {
+    "lobby": {
+      "title": "Lobby",
+      "waiting": "Waiting for players…",
+      "host": "Host",
+      "start": "Start",
+      "starting": "Starting…",
+      "cancel": "Cancel room",
+      "share": "Share link",
+      "leave": "Leave",
+      "errorStart": "Couldn't start",
+      "loadFailed": "Couldn't load the room"
+    },
+    "play": { "title": "In game", "loading": "Loading the room…" },
+    "results": {
+      "title": "Results",
+      "rank": "Rank",
+      "score": "Score",
+      "toHome": "Back to home",
+      "share": "Share"
+    }
+  },
+  "treasure": {
+    "wizard": {
+      "title": "Create a treasure hunt",
+      "step": "Step {{current}} of {{total}}",
+      "addObject": "Add object",
+      "describe": "Describe the object (what it is and where it is)",
+      "describePlaceholder": "e.g. \"Old fountain by the park entrance\"",
+      "regenerate": "Regenerate hint",
+      "regenerationsLeft": "{{n}} regenerations left",
+      "saveTask": "Save task",
+      "delete": "Delete object",
+      "preview": "Preview",
+      "publish": "Publish",
+      "publishing": "Publishing…",
+      "draftSaved": "Draft saved",
+      "minTasks": "Add at least 3 objects",
+      "maxTasks": "You reached the maximum of 10 objects",
+      "errorTitle": "Error",
+      "hint": "AI hint"
+    },
+    "preview": {
+      "title": "Preview",
+      "publish": "Publish",
+      "edit": "Edit"
+    },
+    "play": {
+      "title": "Find the treasure",
+      "hint": "Hint",
+      "submit": "Submit photo",
+      "attempt": "Attempt {{n}}",
+      "loading": "Loading…"
+    },
+    "scoring": {
+      "title": "Comparing photos…",
+      "subtitle": "AI is checking whether you found the treasure.",
+      "match": "You found the treasure! 🎉",
+      "noMatch": "No match",
+      "next": "Next clue",
+      "finish": "Finish"
+    }
+  },
+  "session": {
+    "detail": {
+      "title": "Details",
+      "tasks": "Tasks",
+      "totalScore": "Total score",
+      "duration": "Time",
+      "playAgain": "Play again",
+      "loadFailed": "Couldn't load the session"
+    }
+  },
+  "empty": {
+    "noQuests": "You don't have any games yet",
+    "noQuestsDesc": "Start your first adventure."
+  }
+}

@@ -1,20 +1,22 @@
 import { NavLink } from 'react-router-dom';
 import { Compass, MapPlus, Notebook, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
-const tabs = [
-  { to: '/home', label: 'Начало', Icon: Compass },
-  { to: '/create', label: 'Създай', Icon: MapPlus },
-  { to: '/history', label: 'История', Icon: Notebook },
-  { to: '/profile', label: 'Профил', Icon: User },
-];
-
 export function BottomTabBar() {
+  const { t } = useTranslation();
+  const tabs = [
+    { to: '/home', label: t('tabs.home'), Icon: Compass },
+    { to: '/create', label: t('tabs.create'), Icon: MapPlus },
+    { to: '/history', label: t('tabs.history'), Icon: Notebook },
+    { to: '/profile', label: t('tabs.profile'), Icon: User },
+  ];
+
   return (
     <nav
       className="fixed bottom-0 inset-x-0 z-40 border-t border-parchment-200 bg-parchment-50/95 backdrop-blur supports-[backdrop-filter]:bg-parchment-50/80"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-      aria-label="Основна навигация"
+      aria-label={t('tabs.mainNav')}
     >
       <ul className="mx-auto flex max-w-md items-stretch justify-around px-2 pt-2 pb-2">
         {tabs.map(({ to, label, Icon }) => (

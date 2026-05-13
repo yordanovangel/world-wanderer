@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { ImagePairPicker } from '@/components/auth/ImagePairPicker';
 import { PinInput } from '@/components/auth/PinInput';
 import { useAuth } from '@/lib/auth-context';
@@ -8,6 +9,7 @@ import { normalizeImagePair } from '@/lib/normalize';
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [selected, setSelected] = useState<string[]>([]);
   const [pin, setPin] = useState('');
@@ -31,7 +33,7 @@ export default function LoginPage() {
         navigate('/home', { replace: true });
       }
     } catch (e: any) {
-      setError(e?.message || 'Грешка при вход');
+      setError(e?.message || t('auth.login.errorFallback'));
     } finally {
       setSubmitting(false);
     }
@@ -39,20 +41,13 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-md px-5 pb-10 pt-6">
-      <Link
-        to="/"
-        className="inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900"
-      >
-        <ArrowLeft size={16} /> Назад
+      <Link to="/" className="inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900">
+        <ArrowLeft size={16} /> {t('common.back')}
       </Link>
 
       <header className="mt-4 text-center">
-        <h1 className="font-display text-[28px] leading-tight text-ink-900">
-          Влез в експедицията
-        </h1>
-        <p className="mt-1 text-sm text-ink-500">
-          Избери двете си картинки и въведи PIN
-        </p>
+        <h1 className="font-display text-[28px] leading-tight text-ink-900">{t('auth.login.title')}</h1>
+        <p className="mt-1 text-sm text-ink-500">{t('auth.login.subtitle')}</p>
       </header>
 
       <section className="mt-6">
@@ -60,9 +55,7 @@ export default function LoginPage() {
       </section>
 
       <section className="mt-6">
-        <p className="mb-2 text-center text-xs uppercase tracking-wider text-ink-500">
-          Твоят 4-цифрен PIN
-        </p>
+        <p className="mb-2 text-center text-xs uppercase tracking-wider text-ink-500">{t('auth.pinLabel')}</p>
         <PinInput value={pin} onChange={setPin} />
       </section>
 
@@ -78,14 +71,11 @@ export default function LoginPage() {
         disabled={!ready}
         className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-terracotta-500 px-4 text-base font-semibold text-parchment-50 shadow-soft transition-colors hover:bg-terracotta-700 disabled:cursor-not-allowed disabled:bg-parchment-200 disabled:text-ink-300 disabled:shadow-none"
       >
-        {submitting ? 'Вход…' : 'Влез'}
+        {submitting ? t('auth.login.submitting') : t('auth.login.submit')}
       </button>
 
-      <Link
-        to="/register"
-        className="mt-3 block text-center text-sm text-forest-700 hover:underline"
-      >
-        Нов играч? Създай акаунт →
+      <Link to="/register" className="mt-3 block text-center text-sm text-forest-700 hover:underline">
+        {t('auth.login.noAccount')}
       </Link>
     </div>
   );
