@@ -198,9 +198,10 @@
     "cantJoin": "Can't join",
     "toHome": "Back to home",
     "invitation": "Adventure invitation",
-    "afterLogin": "After signing in you'll join the quest \"{{title}}\".",
+    "afterLogin": "After creating an account you'll join the quest \"{{title}}\".",
     "redirecting": "Redirecting…",
-    "toLogin": "To login →",
+    "toRegister": "Create a new account →",
+    "toLogin": "I already have an account →",
     "joiningTo": "Joining you to \"{{title}}\"…",
     "joining": "Joining you…"
   },
