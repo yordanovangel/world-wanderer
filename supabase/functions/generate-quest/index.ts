@@ -1,10 +1,11 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { jwtVerify } from 'https://esm.sh/jose@5.9.4';
+import { getUserLang, type Lang } from '../_shared/auth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
+    'authorization, x-client-info, apikey, content-type, x-language, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
@@ -32,55 +33,59 @@ async function verifyAppJwt(authHeader: string | null, secret: string): Promise<
   }
 }
 
-const SYSTEM_PROMPT = `You are a quest designer. The user has sent 1-3 photos of their immediate surroundings (home, park, street, office, etc.).
+const langName = (l: Lang) => (l === 'en' ? 'English' : 'Bulgarian');
+
+const buildSystemPrompt = (lang: Lang) => `You are a quest designer. The user has sent 1-3 photos of their immediate surroundings (home, park, street, office, etc.).
 
 ANALYZE the photos — do NOT describe a new scene. Base everything on what is actually visible.
 
 Generate a quest with a RANDOM number of tasks between 4 and 11. Tasks must be fun, safe, legal, and physically doable by someone standing in this environment right now. They should involve finding/photographing real things.
 
 Each task has TWO parts:
-- PUBLIC (shown to player): title + description in Bulgarian
+- PUBLIC (shown to player): title + description in ${langName(lang)}
 - HIDDEN (used later to score submitted photos): detailed criteria in English, describing exactly what a correct photo must contain. This is a system instruction — reviewer should EVALUATE the user's submitted photo against these criteria, NOT generate a new one.
 
-Use the suggest_quest tool to return the result. Vary the number of tasks. Mix difficulties.`;
+Use the suggest_quest tool to return the result. Vary the number of tasks. Mix difficulties.
+ALL public natural-language fields (quest title, quest description, task title, task description) MUST be written in ${langName(lang)}. Hidden criteria stay in English.`;
 
-const QUEST_TOOL = {
-  type: 'function',
-  function: {
-    name: 'suggest_quest',
-    description: 'Return the generated quest with public tasks and hidden criteria.',
-    parameters: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', description: 'Quest title in Bulgarian' },
-        description: { type: 'string', description: 'One-sentence hook in Bulgarian' },
-        tasks: {
-          type: 'array',
-          description: 'Between 4 and 11 tasks',
-          items: {
-            type: 'object',
-            properties: {
-              order: { type: 'integer', description: 'Order index starting at 1' },
-              title: { type: 'string', description: 'Task title in Bulgarian' },
-              description: {
-                type: 'string',
-                description: '1-2 sentences in Bulgarian — what to photograph',
+const buildQuestTool = (lang: Lang) =>
+  ({
+    type: 'function',
+    function: {
+      name: 'suggest_quest',
+      description: 'Return the generated quest with public tasks and hidden criteria.',
+      parameters: {
+        type: 'object',
+        properties: {
+          title: { type: 'string', description: `Quest title in ${langName(lang)}` },
+          description: { type: 'string', description: `One-sentence hook in ${langName(lang)}` },
+          tasks: {
+            type: 'array',
+            description: 'Between 4 and 11 tasks',
+            items: {
+              type: 'object',
+              properties: {
+                order: { type: 'integer', description: 'Order index starting at 1' },
+                title: { type: 'string', description: `Task title in ${langName(lang)}` },
+                description: {
+                  type: 'string',
+                  description: `1-2 sentences in ${langName(lang)} — what to photograph`,
+                },
+                hidden_criteria: {
+                  type: 'string',
+                  description:
+                    'English; for the AI evaluator. What must be in the photo for full marks, partial credit conditions, what is disqualifying.',
+                },
+                max_points: { type: 'integer', description: 'Always 10' },
               },
-              hidden_criteria: {
-                type: 'string',
-                description:
-                  'English; for the AI evaluator. What must be in the photo for full marks, partial credit conditions, what is disqualifying.',
-              },
-              max_points: { type: 'integer', description: 'Always 10' },
+              required: ['order', 'title', 'description', 'hidden_criteria', 'max_points'],
             },
-            required: ['order', 'title', 'description', 'hidden_criteria', 'max_points'],
           },
         },
+        required: ['title', 'description', 'tasks'],
       },
-      required: ['title', 'description', 'tasks'],
     },
-  },
-} as const;
+  }) as const;
 
 type GeneratedTask = {
   order: number;
@@ -96,7 +101,7 @@ type GeneratedQuest = {
   tasks: GeneratedTask[];
 };
 
-async function callAi(signedUrls: string[]): Promise<GeneratedQuest> {
+async function callAi(signedUrls: string[], lang: Lang): Promise<GeneratedQuest> {
   const apiKey = Deno.env.get('LOVABLE_API_KEY');
   if (!apiKey) throw new Error('LOVABLE_API_KEY missing');
 
@@ -106,16 +111,16 @@ async function callAi(signedUrls: string[]): Promise<GeneratedQuest> {
   }));
   userContent.push({
     type: 'text',
-    text: 'Generate the quest based on these photos. Use the suggest_quest tool.',
+    text: `Generate the quest based on these photos. Use the suggest_quest tool. Public fields in ${langName(lang)}.`,
   });
 
   const body = {
     model: AI_MODEL,
     messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system', content: buildSystemPrompt(lang) },
       { role: 'user', content: userContent },
     ],
-    tools: [QUEST_TOOL],
+    tools: [buildQuestTool(lang)],
     tool_choice: { type: 'function', function: { name: 'suggest_quest' } },
   };
 
@@ -166,6 +171,8 @@ function nanoToken(len = 10): string {
   return out;
 }
 
+const errMsg = (lang: Lang, bg: string, en: string) => (lang === 'en' ? en : bg);
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
@@ -185,6 +192,13 @@ Deno.serve(async (req) => {
     return json({ error: 'Invalid JSON' }, 400);
   }
 
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  );
+
+  const lang = await getUserLang(supabase, userId);
+
   const sourcePaths: string[] = Array.isArray(payload?.source_paths) ? payload.source_paths : [];
   const mode: 'solo' | 'multiplayer' = payload?.mode === 'multiplayer' ? 'multiplayer' : 'solo';
   const timeLimitSec: number | null =
@@ -193,13 +207,8 @@ Deno.serve(async (req) => {
       : null;
 
   if (sourcePaths.length < 1 || sourcePaths.length > 3) {
-    return json({ error: 'Изпрати между 1 и 3 снимки' }, 400);
+    return json({ error: errMsg(lang, 'Изпрати между 1 и 3 снимки', 'Send between 1 and 3 photos') }, 400);
   }
-
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-  );
 
   // Rate limit: count quests created by this user in last hour
   const since = new Date(Date.now() - 3600 * 1000).toISOString();
@@ -210,13 +219,13 @@ Deno.serve(async (req) => {
     .gte('created_at', since);
   if (rlErr) console.error('rate-limit', rlErr);
   if ((recentCount ?? 0) >= RATE_LIMIT_PER_HOUR) {
-    return json({ error: 'Прекалено много quest-ове за час. Опитай след малко.' }, 429);
+    return json({ error: errMsg(lang, 'Прекалено много quest-ове за час. Опитай след малко.', 'Too many quests this hour. Try again shortly.') }, 429);
   }
 
   // Verify each source path is namespaced under this user
   for (const p of sourcePaths) {
     if (typeof p !== 'string' || !p.startsWith(`${userId}/`)) {
-      return json({ error: 'Невалиден път на снимка' }, 400);
+      return json({ error: errMsg(lang, 'Невалиден път на снимка', 'Invalid photo path') }, 400);
     }
   }
 
@@ -228,7 +237,7 @@ Deno.serve(async (req) => {
       .createSignedUrl(p, SIGNED_TTL_SEC);
     if (error || !data?.signedUrl) {
       console.error('sign url', error);
-      return json({ error: 'Не можахме да подготвим снимките' }, 500);
+      return json({ error: errMsg(lang, 'Не можахме да подготвим снимките', "Couldn't prepare the photos") }, 500);
     }
     signedUrls.push(data.signedUrl);
   }
@@ -236,20 +245,20 @@ Deno.serve(async (req) => {
   // Call AI (one retry on parse failure)
   let generated: GeneratedQuest;
   try {
-    generated = await callAi(signedUrls);
+    generated = await callAi(signedUrls, lang);
   } catch (e: any) {
     console.error('ai call 1', e?.message, e?.body);
     if (e?.status === 429) {
-      return json({ error: 'AI системата е заета. Опитай отново след минута.' }, 429);
+      return json({ error: errMsg(lang, 'AI системата е заета. Опитай отново след минута.', 'AI is busy. Try again in a minute.') }, 429);
     }
     if (e?.status === 402) {
-      return json({ error: 'Изчерпан AI кредит на работното пространство.' }, 402);
+      return json({ error: errMsg(lang, 'Изчерпан AI кредит на работното пространство.', 'Workspace AI credits exhausted.') }, 402);
     }
     try {
-      generated = await callAi(signedUrls);
+      generated = await callAi(signedUrls, lang);
     } catch (e2: any) {
       console.error('ai call 2', e2?.message);
-      return json({ error: 'AI не успя да генерира quest. Опитай пак.' }, 502);
+      return json({ error: errMsg(lang, 'AI не успя да генерира quest. Опитай пак.', 'AI failed to generate the quest. Try again.') }, 502);
     }
   }
 
@@ -270,7 +279,7 @@ Deno.serve(async (req) => {
     .single();
   if (qErr || !questRow) {
     console.error('insert quest', qErr);
-    return json({ error: 'Не успяхме да запазим quest-а' }, 500);
+    return json({ error: errMsg(lang, 'Не успяхме да запазим quest-а', "Couldn't save the quest") }, 500);
   }
 
   const sourceRows = sourcePaths.map((p, i) => ({
@@ -282,7 +291,7 @@ Deno.serve(async (req) => {
   if (srcErr) {
     console.error('insert sources', srcErr);
     await supabase.from('quests').delete().eq('id', questRow.id);
-    return json({ error: 'Не успяхме да запазим снимките' }, 500);
+    return json({ error: errMsg(lang, 'Не успяхме да запазим снимките', "Couldn't save the photos") }, 500);
   }
 
   const taskRows = generated.tasks
@@ -302,7 +311,7 @@ Deno.serve(async (req) => {
   if (tErr || !insertedTasks) {
     console.error('insert tasks', tErr);
     await supabase.from('quests').delete().eq('id', questRow.id);
-    return json({ error: 'Не успяхме да запазим задачите' }, 500);
+    return json({ error: errMsg(lang, 'Не успяхме да запазим задачите', "Couldn't save the tasks") }, 500);
   }
 
   return json({
