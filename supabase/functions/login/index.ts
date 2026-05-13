@@ -14,7 +14,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const PIN_RE = /^\d{4}$/;
 const RATE_LIMIT_WINDOW_SEC = 60;
 const RATE_LIMIT_MAX_FAILS = 5;
-const GENERIC_ERROR = locFn(req, 'Грешна комбинация — опитай отново', 'Wrong combination — try again');
+const genericError = (req: Request) => locFn(req, 'Грешна комбинация — опитай отново', 'Wrong combination — try again');
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
