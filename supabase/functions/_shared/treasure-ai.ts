@@ -3,48 +3,56 @@
 const AI_MODEL = 'google/gemini-2.5-pro';
 const GATEWAY_URL = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
-const HINT_SYSTEM = `You are designing a treasure hunt clue. The creator has photographed
+export type Lang = 'bg' | 'en';
+
+const langName = (l: Lang) => (l === 'en' ? 'English' : 'Bulgarian');
+
+const buildHintSystem = (lang: Lang) => `You are designing a treasure hunt clue. The creator has photographed
 a specific real-world object/location and described it plainly.
 
-Transform the plain description into an intriguing clue in Bulgarian that:
+Transform the plain description into an intriguing clue in ${langName(lang)} that:
 - Hints at what/where the target is without naming it directly
 - Uses evocative language, metaphor, or wordplay
 - Is 1-3 sentences
-- Does NOT reveal the exact object name`;
+- Does NOT reveal the exact object name
 
-const HINT_TOOL = {
-  type: 'function',
-  function: {
-    name: 'create_hint',
-    description: 'Return the intriguing Bulgarian clue.',
-    parameters: {
-      type: 'object',
-      properties: {
-        hint: { type: 'string', description: 'Bulgarian clue, 1-3 sentences.' },
+The 'hint' field MUST be written in ${langName(lang)}.`;
+
+const buildHintTool = (lang: Lang) =>
+  ({
+    type: 'function',
+    function: {
+      name: 'create_hint',
+      description: `Return the intriguing ${langName(lang)} clue.`,
+      parameters: {
+        type: 'object',
+        properties: {
+          hint: { type: 'string', description: `${langName(lang)} clue, 1-3 sentences.` },
+        },
+        required: ['hint'],
+        additionalProperties: false,
       },
-      required: ['hint'],
-      additionalProperties: false,
     },
-  },
-} as const;
+  }) as const;
 
 export async function generateHint(
   creatorContext: string,
-  opts: { temperature?: number } = {},
+  opts: { temperature?: number; lang?: Lang } = {},
 ): Promise<string> {
   const apiKey = Deno.env.get('LOVABLE_API_KEY');
   if (!apiKey) throw new Error('LOVABLE_API_KEY missing');
+  const lang: Lang = opts.lang ?? 'bg';
 
   const body: any = {
     model: AI_MODEL,
     messages: [
-      { role: 'system', content: HINT_SYSTEM },
+      { role: 'system', content: buildHintSystem(lang) },
       {
         role: 'user',
-        content: `Plain description: ${creatorContext}\n\nUse the create_hint tool.`,
+        content: `Plain description: ${creatorContext}\n\nUse the create_hint tool. Reply in ${langName(lang)}.`,
       },
     ],
-    tools: [HINT_TOOL],
+    tools: [buildHintTool(lang)],
     tool_choice: { type: 'function', function: { name: 'create_hint' } },
   };
   if (typeof opts.temperature === 'number') body.temperature = opts.temperature;
@@ -80,7 +88,7 @@ export async function generateHint(
   }
 }
 
-const COMPARE_SYSTEM = `You are verifying a treasure hunt answer.
+const buildCompareSystem = (lang: Lang) => `You are verifying a treasure hunt answer.
 
 REFERENCE photo (the correct answer) is the FIRST image.
 SUBMITTED photo (player's guess) is the SECOND image.
@@ -99,7 +107,7 @@ Do NOT accept if:
 - Submitted is a similar but different object (e.g. a different bench, a different fountain)
 - Submitted is a photo of a screen displaying the reference
 
-Use the compare_images tool. user_hint must be in Bulgarian:
+Use the compare_images tool. user_hint MUST be written in ${langName(lang)}:
 - For no-match: gentle nudge towards the right answer without revealing it
 - For match: short congratulatory message`;
 
@@ -115,7 +123,7 @@ const COMPARE_TOOL = {
         confidence: { type: 'number', minimum: 0, maximum: 1 },
         fraud_suspected: { type: 'boolean' },
         fraud_reason: { type: ['string', 'null'] },
-        user_hint: { type: 'string', description: 'Bulgarian, 1 sentence.' },
+        user_hint: { type: 'string', description: '1 sentence in the requested language.' },
       },
       required: ['match', 'confidence', 'fraud_suspected', 'user_hint'],
       additionalProperties: false,
@@ -134,20 +142,25 @@ export type CompareResult = {
 export async function compareImages(
   referenceUrl: string,
   submissionUrl: string,
+  opts: { lang?: Lang } = {},
 ): Promise<CompareResult> {
   const apiKey = Deno.env.get('LOVABLE_API_KEY');
   if (!apiKey) throw new Error('LOVABLE_API_KEY missing');
+  const lang: Lang = opts.lang ?? 'bg';
 
   const body = {
     model: AI_MODEL,
     messages: [
-      { role: 'system', content: COMPARE_SYSTEM },
+      { role: 'system', content: buildCompareSystem(lang) },
       {
         role: 'user',
         content: [
           { type: 'image_url', image_url: { url: referenceUrl } },
           { type: 'image_url', image_url: { url: submissionUrl } },
-          { type: 'text', text: 'Compare these two images and use the compare_images tool.' },
+          {
+            type: 'text',
+            text: `Compare these two images and use the compare_images tool. Reply in ${langName(lang)}.`,
+          },
         ],
       },
     ],
