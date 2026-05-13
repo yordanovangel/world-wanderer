@@ -1,4 +1,5 @@
 import { Compass, Map, Users, type LucideProps } from 'lucide-react';
+import i18n from '@/i18n';
 
 export type QuestMode = 'solo' | 'multiplayer' | 'treasure_hunt';
 
@@ -8,11 +9,10 @@ const ICONS: Record<QuestMode, React.ComponentType<LucideProps>> = {
   treasure_hunt: Map,
 };
 
-export const MODE_LABEL: Record<QuestMode, string> = {
-  solo: 'Соло',
-  multiplayer: 'Мултиплейър',
-  treasure_hunt: 'Съкровище',
-};
+/** @deprecated Use t(`mode.${mode}`) instead — kept for compatibility. */
+export const MODE_LABEL: Record<QuestMode, string> = new Proxy({} as Record<QuestMode, string>, {
+  get: (_target, prop: string) => i18n.t(`mode.${prop}`),
+});
 
 export function ModeIcon({
   mode,
@@ -24,5 +24,5 @@ export function ModeIcon({
   className?: string;
 }) {
   const Icon = ICONS[mode];
-  return <Icon size={size} className={className} aria-label={MODE_LABEL[mode]} />;
+  return <Icon size={size} className={className} aria-label={i18n.t(`mode.${mode}`)} />;
 }

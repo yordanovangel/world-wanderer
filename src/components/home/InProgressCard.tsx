@@ -1,13 +1,22 @@
 import { Hourglass } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { SessionSummary } from '@/lib/queries/home';
 import { daysRemaining, sessionExpiresAt } from '@/lib/format';
 import { ModeIcon } from './ModeIcon';
 
 export function InProgressCard({ s }: { s: SessionSummary }) {
+  const { t, i18n } = useTranslation();
   const total = Math.max(s.total_tasks, 1);
   const pct = Math.min(100, Math.round((s.submitted_tasks / total) * 100));
   const days = daysRemaining(sessionExpiresAt(s.started_at));
+  const dayLabel = i18n.language.startsWith('en')
+    ? days === 1 ? 'day' : 'days'
+    : days === 1 ? 'ден' : 'дни';
+  const expiresLabel = i18n.language.startsWith('en')
+    ? `Expires in ${days} ${dayLabel}`
+    : `Изтича след ${days} ${dayLabel}`;
+  const tasksLabel = i18n.language.startsWith('en') ? 'tasks' : 'задачи';
 
   return (
     <Link
@@ -34,7 +43,7 @@ export function InProgressCard({ s }: { s: SessionSummary }) {
       <div>
         <div className="mb-1 flex items-baseline justify-between text-xs text-ink-500">
           <span className="font-mono-rq">
-            {s.submitted_tasks}/{s.total_tasks} задачи
+            {s.submitted_tasks}/{s.total_tasks} {tasksLabel}
           </span>
           <span className="font-mono-rq">{pct}%</span>
         </div>
@@ -45,7 +54,7 @@ export function InProgressCard({ s }: { s: SessionSummary }) {
           />
         </div>
         <p className="mt-2 inline-flex items-center gap-1 text-[11px] text-ink-500">
-          <Hourglass size={12} /> Изтича след {days} {days === 1 ? 'ден' : 'дни'}
+          <Hourglass size={12} /> {expiresLabel}
         </p>
       </div>
     </Link>

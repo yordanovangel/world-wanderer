@@ -1,18 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { SessionSummary } from '@/lib/queries/home';
 import { formatDuration } from '@/lib/format';
 import { ModeIcon } from './ModeIcon';
 import { deleteSession } from '@/lib/queries/quests';
 import { toast } from '@/hooks/use-toast';
-
-const STATUS_LABEL: Record<SessionSummary['status'], string> = {
-  in_progress: 'В ход',
-  completed: 'Завършен',
-  abandoned: 'Изоставен',
-  expired: 'Изтекъл',
-};
 
 const STATUS_CLASS: Record<SessionSummary['status'], string> = {
   in_progress: 'bg-ochre-200 text-ochre-700',
@@ -28,6 +22,7 @@ export function PastSessionRow({
   s: SessionSummary;
   onDeleted?: (sessionId: string) => void;
 }) {
+  const { t } = useTranslation();
   const isCompleted = s.status === 'completed';
   const canDelete = s.status !== 'in_progress';
   const [deleting, setDeleting] = useState(false);
@@ -37,16 +32,16 @@ export function PastSessionRow({
     e.preventDefault();
     e.stopPropagation();
     if (!canDelete || deleting) return;
-    if (!confirm(`Изтрий "${s.quest_title}" от историята? Това действие е необратимо.`)) return;
+    if (!confirm(t('history.confirmDelete', { title: s.quest_title }))) return;
     setDeleting(true);
     try {
       await deleteSession(s.session_id);
       setRemoved(true);
       onDeleted?.(s.session_id);
-      toast({ title: 'Сесията е изтрита' });
+      toast({ title: t('history.deletedToast') });
     } catch (err: any) {
       toast({
-        title: 'Грешка при изтриване',
+        title: t('history.deleteErrorTitle'),
         description: err?.message,
         variant: 'destructive',
       });
@@ -70,11 +65,11 @@ export function PastSessionRow({
           <span
             className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_CLASS[s.status]}`}
           >
-            {STATUS_LABEL[s.status]}
+            {t(`history.status.${s.status}`)}
           </span>
         </div>
         <div className="text-right font-mono-rq text-sm text-ink-500">
-          {isCompleted ? `${s.total_score} т.` : formatDuration(s.duration_sec)}
+          {isCompleted ? `${s.total_score} ${t('common.points')}` : formatDuration(s.duration_sec)}
         </div>
       </Link>
       {canDelete && (
@@ -82,7 +77,7 @@ export function PastSessionRow({
           type="button"
           onClick={handleDelete}
           disabled={deleting}
-          aria-label="Изтрий сесията"
+          aria-label={t('history.deleteAria')}
           className="inline-flex w-10 flex-none items-center justify-center rounded-xl border border-parchment-200 bg-white text-ink-500 shadow-soft transition hover:bg-danger-200/40 hover:text-danger-600 disabled:opacity-50"
         >
           {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}

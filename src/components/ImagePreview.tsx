@@ -1,4 +1,5 @@
 import { Check, RotateCcw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export type ImagePreviewProps = {
   src: string;
@@ -13,16 +14,17 @@ export function ImagePreview({
   src,
   onConfirm,
   onRetake,
-  confirmLabel = 'Приеми',
-  retakeLabel = 'Снимай пак',
+  confirmLabel,
+  retakeLabel,
   busy,
 }: ImagePreviewProps) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       <div className="overflow-hidden rounded-2xl shadow-card">
         <img
           src={src}
-          alt="Преглед"
+          alt={t('image.preview')}
           className="block h-auto w-full bg-parchment-100 object-cover"
         />
       </div>
@@ -33,7 +35,7 @@ export function ImagePreview({
           disabled={busy}
           className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-forest-700 bg-white px-4 text-base font-semibold text-forest-700 transition-colors hover:bg-forest-200/40 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <RotateCcw size={18} /> {retakeLabel}
+          <RotateCcw size={18} /> {retakeLabel ?? t('image.retake')}
         </button>
         <button
           type="button"
@@ -41,7 +43,7 @@ export function ImagePreview({
           disabled={busy}
           className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-terracotta-500 px-4 text-base font-semibold text-parchment-50 shadow-soft transition-colors hover:bg-terracotta-700 disabled:cursor-not-allowed disabled:bg-parchment-200 disabled:text-ink-300 disabled:shadow-none"
         >
-          <Check size={18} /> {confirmLabel}
+          <Check size={18} /> {confirmLabel ?? t('image.accept')}
         </button>
       </div>
     </div>
