@@ -111,3 +111,17 @@ export function tErr(lang: Lang, key: string): string {
   };
   return (lang === 'en' ? en : bg)[key] ?? key;
 }
+
+/** Look up the stored language preference for a user (defaults to 'bg'). */
+export async function getUserLang(
+  supabase: { from: (t: string) => any },
+  userId: string,
+): Promise<Lang> {
+  try {
+    const { data } = await supabase.from('users').select('language').eq('id', userId).maybeSingle();
+    const lng = (data as any)?.language;
+    return lng === 'en' ? 'en' : 'bg';
+  } catch {
+    return 'bg';
+  }
+}
