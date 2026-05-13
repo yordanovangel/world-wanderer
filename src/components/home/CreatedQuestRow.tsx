@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { CreatedQuest } from '@/lib/queries/home';
-import { ModeIcon, MODE_LABEL } from './ModeIcon';
+import { ModeIcon } from './ModeIcon';
 
 export function CreatedQuestRow({ q }: { q: CreatedQuest }) {
+  const { t } = useTranslation();
   const isDraft = q.status === 'draft';
   return (
     <Link
@@ -15,7 +17,7 @@ export function CreatedQuestRow({ q }: { q: CreatedQuest }) {
       <div className="min-w-0 flex-1">
         <p className="truncate text-base font-semibold text-ink-900">{q.title}</p>
         <p className="text-xs text-ink-500">
-          {MODE_LABEL[q.mode]} · {isDraft ? 'Чернова' : 'Публикуван'}
+          {t(`mode.${q.mode}`)} · {isDraft ? t('profile.draft') : t('profile.published')}
         </p>
       </div>
     </Link>

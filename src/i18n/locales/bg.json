@@ -18,7 +18,13 @@
     "no": "Не",
     "points": "т.",
     "of": "от",
-    "loadFailed": "Не можахме да заредим"
+    "loadFailed": "Не можахме да заредим",
+    "done": "Готово",
+    "min": "мин",
+    "anonymous": "Анонимен",
+    "you": "ти",
+    "minutes_short": "мин",
+    "you_inline": "(ти)"
   },
   "tabs": {
     "home": "Начало",
@@ -106,7 +112,19 @@
     "loadFailedTitle": "Не успяхме да заредим профила",
     "draft": "Чернова",
     "archived": "Архив",
-    "published": "Публикуван"
+    "published": "Публикуван",
+    "createdTitle": "Моите quest-ове",
+    "backToProfile": "Назад към профил",
+    "shareBtn": "Сподели",
+    "archiveBtn": "Архивирай",
+    "archivingBtn": "Архивиране…",
+    "archivedBtn": "Архивиран",
+    "confirmArchive": "Архивираните quest-ове не могат да бъдат започнати от нови играчи. Активните игри продължават.",
+    "archivedToast": "Quest архивиран",
+    "archiveFailed": "Не успяхме да архивираме",
+    "createdLoadFailed": "Не успяхме да заредим quest-овете",
+    "questNotFound": "Quest не съществува",
+    "createQuest": "Създай quest"
   },
   "create": {
     "title": "Създай куест",
@@ -144,12 +162,15 @@
     "permission": "Разреши достъп до камерата",
     "permissionDenied": "Достъпът е отказан",
     "useFile": "Качи снимка от устройството",
-    "capture": "Заснеми",
+    "capture": "Снимай",
     "retake": "Повтори",
     "switchCamera": "Смени камерата",
     "useUpload": "Качи файл вместо това",
     "starting": "Стартираме камерата…",
-    "errorTitle": "Грешка с камерата"
+    "errorTitle": "Грешка с камерата",
+    "processing": "Обработване…",
+    "compressFailedTitle": "Неуспешно обработване на снимката",
+    "compressFailedDesc": "Опитай отново."
   },
   "image": {
     "uploading": "Качване…",
@@ -157,14 +178,25 @@
     "tooLarge": "Файлът е твърде голям",
     "invalidType": "Невалиден файлов тип",
     "remove": "Премахни",
-    "preview": "Преглед"
+    "preview": "Преглед",
+    "accept": "Приеми",
+    "retake": "Снимай пак",
+    "errorBadge": "Грешка"
   },
   "share": {
     "title": "Сподели приключение",
     "linkCopied": "Линкът е копиран",
     "copy": "Копирай линка",
     "shareNative": "Сподели",
-    "qrAlt": "QR код"
+    "qrAlt": "QR код",
+    "modalTitle": "Сподели quest",
+    "header": "Сподели приключението",
+    "copied": "Копирано!",
+    "copyShort": "Копирай",
+    "copyFailed": "Не успяхме да копираме",
+    "nativeText": "Хайде да играем \"{{title}}\"!",
+    "nativeTextNoTitle": "Хайде да играем заедно!",
+    "close": "Затвори"
   },
   "quest": {
     "intro": {
@@ -172,22 +204,55 @@
       "tasks_one": "{{count}} задача",
       "tasks_other": "{{count}} задачи",
       "start": "Започни",
+      "starting": "Стартиране…",
       "back": "Назад",
-      "loadFailed": "Не можахме да заредим quest-а"
+      "loadFailed": "Не можахме да заредим quest-а",
+      "ready": "Твоят quest е готов!",
+      "shareWithFriend": "Сподели с приятел",
+      "notFound": "Quest-ът не съществува",
+      "toHome": "Към начало",
+      "sourceImg": "Източник {{n}}",
+      "startFailed": "Не успяхме да стартираме сесия"
     },
     "play": {
       "task": "Задача {{current}} от {{total}}",
+      "taskShort": "Задача {{current}}/{{total}}",
       "progress": "{{done}} от {{total}}",
       "submit": "Изпрати снимка",
       "abandon": "Откажи се",
       "abandonConfirm": "Сигурен ли си, че искаш да откажеш?",
       "abandonErrorTitle": "Грешка при отказ",
-      "loading": "Зареждаме…"
+      "loading": "Зареждаме…",
+      "back": "Назад",
+      "abandonAria": "Откажи се от куеста",
+      "abandonedToast": "Куестът е приключен",
+      "abandonFailed": "Не успяхме да откажем куеста",
+      "loadFailed": "Не успяхме да заредим сесията",
+      "uploadFailed": "Не успяхме да качим снимката",
+      "captureLabel": "Заснеми отговора",
+      "captureDesc": "Снимай какво виждаш — AI ще го оцени.",
+      "uploading": "Качване…",
+      "attemptsLeft_one": "Остава {{count}} опит",
+      "attemptsLeft_other": "Остават {{count}} опита",
+      "taskNumber": "Задача {{n}}",
+      "abandonDialogTitle": "Сигурен ли си?",
+      "abandonDialogDesc": "Куестът ще бъде маркиран като отказан. Прогресът ти ще бъде запазен в историята, но няма да можеш да го продължиш.",
+      "abandonDialogCancel": "Назад",
+      "abandonDialogConfirm": "Откажи се",
+      "abandoning": "Отказване…",
+      "exit": "Изход",
+      "timeUp": "Времето изтече",
+      "uploadErrorTitle": "Грешка при качване",
+      "cancelledToast": "Играта беше прекратена от host-а"
     },
     "scoring": {
       "title": "Оценяваме снимката…",
       "subtitle": "AI преглежда и поставя точки.",
-      "errorTitle": "Грешка при оценяване"
+      "errorTitle": "Грешка при оценяване",
+      "missing": "Липсват данни за оценяване",
+      "scanning": "Изследвам снимката…",
+      "yourPhoto": "Твоята снимка",
+      "back": "Назад"
     },
     "result": {
       "matchYes": "Удачно",
@@ -195,71 +260,119 @@
       "yourScore": "Твоят резултат",
       "feedback": "Обратна връзка",
       "next": "Следваща задача",
-      "finish": "Завърши quest"
+      "finish": "Завърши quest",
+      "found": "Намерено!",
+      "notQuite": "Не съвсем…",
+      "thisRemains": "Това остава — {{score}} точки",
+      "current": "Текущ резултат: {{score}}/10 · опит {{attempt}}/{{max}}",
+      "tryAgain": "Опитай пак",
+      "acceptScore": "Приемам {{score}} точки",
+      "toResult": "Към резултата",
+      "continue": "Продължи",
+      "exit": "Изход към начало",
+      "scoreSuffix": "+{{n}} точки"
     },
     "complete": {
-      "title": "Готово! 🎉",
+      "title": "Quest завършен!",
       "subtitle": "Завърши quest-а.",
       "totalScore": "Общ резултат",
       "duration": "Време",
+      "score": "Резултат",
+      "perTask": "По задачи",
+      "shareResults": "Сподели резултата",
+      "toMyGames": "Към моите игри",
       "toHome": "Към началото",
-      "shareResults": "Сподели резултата"
+      "loading": "Зареждане…"
     },
     "leaderboard": {
       "title": "Класация",
       "noPlays": "Все още няма играни сесии.",
       "share": "Сподели quest",
-      "loadFailed": "Не можахме да заредим класацията"
+      "loadFailed": "Не можахме да заредим класирането",
+      "rankings": "Класиране",
+      "noPlayers": "Още няма играчи.",
+      "shareToStart": "Сподели quest-а, за да започне класирането.",
+      "creatorBadge": "Creator"
     }
   },
   "solo": {
-    "captureTitle": "Заснеми околността",
-    "captureSubtitle": "Качи 3–8 снимки. AI ще създаде задачи от тях.",
+    "captureTitle": "Заснеми 1–3 снимки на околността",
+    "captureSubtitle": "AI ще ги анализира и ще ти генерира quest",
     "addPhoto": "Добави снимка",
-    "create": "Създай quest",
+    "create": "Генерирай quest",
     "creating": "Създаваме…",
-    "needMore": "Качи поне 3 снимки",
-    "errorTitle": "Грешка при създаване"
+    "needMore": "Качи поне 1 снимка",
+    "errorTitle": "Грешка при създаване",
+    "uploadFailed": "Не успяхме да качим снимката — провери интернет",
+    "uploadShort": "Не успяхме да качим снимката",
+    "generateFailed": "Не успяхме да генерираме quest",
+    "uploaded": "{{done}}/{{total}} качени",
+    "analyzing": "AI анализира…",
+    "mayTakeMinute": "Това може да отнеме до минута.",
+    "removeAria": "Премахни"
   },
   "multi": {
-    "captureTitle": "Заснеми за мултиплейър",
-    "configTitle": "Настройки",
+    "captureTitle": "Заснеми 1–3 снимки за приключението",
+    "captureSubtitle": "AI ще генерира задачи, които приятелите ти ще играят",
+    "configTitle": "Колко време?",
+    "configSubtitle": "Времето започва, щом стартираш стаята",
     "maxPlayers": "Максимален брой играчи",
     "timeLimit": "Времево ограничение (мин)",
-    "create": "Създай стая",
-    "creating": "Създаваме…",
-    "errorTitle": "Грешка"
+    "create": "Генерирай quest и отвори стая",
+    "creating": "AI създава стаята…",
+    "errorTitle": "Грешка",
+    "missingPhotos": "Липсват снимки",
+    "missingPhotosDesc": "Заснеми отново.",
+    "createRoomFailed": "Не успяхме да създадем стая",
+    "continueToConfig": "Продължи към настройки"
   },
   "room": {
     "lobby": {
-      "title": "Лоби",
-      "waiting": "Чакаме играчи…",
+      "title": "Стая за приключение",
+      "waiting": "Изчакваме играчи…",
       "host": "Домакин",
-      "start": "Стартирай",
+      "start": "Започни ({{count}}/5)",
       "starting": "Стартираме…",
-      "cancel": "Откажи стая",
-      "share": "Сподели линк",
+      "cancel": "Отмени стая",
+      "share": "Сподели стая (QR + линк)",
       "leave": "Излез",
       "errorStart": "Не успяхме да стартираме",
-      "loadFailed": "Не можахме да заредим стаята"
+      "loadFailed": "Не можахме да заредим стаята",
+      "notFound": "Стаята не съществува",
+      "players": "Играчи",
+      "tasks": "{{count}} задачи",
+      "tasksWithTime": "{{count}} задачи · {{min}} мин",
+      "tasksLoading": "… задачи",
+      "playerFallback": "Играч",
+      "waitingHost": "Изчакваме host-а да стартира…",
+      "confirmCancel": "Сигурен ли си? Играта се прекратява за всички.",
+      "cancelledToast": "Играта беше прекратена от host-а"
     },
     "play": { "title": "В играта", "loading": "Зареждаме стаята…" },
     "results": {
       "title": "Резултати",
       "rank": "Място",
       "score": "Точки",
-      "toHome": "Към началото",
-      "share": "Сподели"
+      "toHome": "Към моите игри",
+      "share": "Сподели",
+      "didNotFinish": "Не завършиха",
+      "noResults": "Все още няма резултати.",
+      "playerFallback": "Играч",
+      "completed": "Завършен",
+      "abandoned": "Прекратен",
+      "expired": "Изтекъл"
     }
   },
   "treasure": {
     "wizard": {
-      "title": "Създай търсене на съкровище",
-      "step": "Стъпка {{current}} от {{total}}",
+      "title": "Създай treasure hunt",
+      "intro": "Ти ще снимаш 10 реални обекта. AI ще направи интересни подсказки за всеки. Твоите приятели ще трябва да ги намерят по подсказките.",
+      "step": "Задача {{current}} от {{total}}",
       "addObject": "Добави обект",
-      "describe": "Опиши обекта (какво е и къде се намира)",
-      "describePlaceholder": "Напр. „Стара чешма пред входа на парка\"",
-      "regenerate": "Прегенерирай подсказка",
+      "describe": "Опиши накратко какво е това, за да AI разбере",
+      "describePlaceholder": "напр. „синята пейка до фонтана пред офиса\"",
+      "regenerate": "Регенерирай (остават {{n}})",
+      "noMoreRegens": "Няма повече опити",
       "regenerationsLeft": "Остават {{n}} прегенерирания",
       "saveTask": "Запази задача",
       "delete": "Изтрий обект",
@@ -270,27 +383,70 @@
       "minTasks": "Добави поне 3 обекта",
       "maxTasks": "Достигна максимума от 10 обекта",
       "errorTitle": "Грешка",
-      "hint": "AI подсказка"
+      "hint": "Подсказка",
+      "captureTaskTitle": "Задача {{n}}: Снимай обекта",
+      "captureSubtitle": "Заснеми точно това, което приятелите ти трябва да намерят.",
+      "captureLabel": "Снимай обекта",
+      "preparing": "Подготвяме…",
+      "start": "Започни",
+      "draftFailed": "Не успяхме да създадем чернова",
+      "uploadFailed": "Качването неуспешно",
+      "describeMin": "Опиши обекта",
+      "describeMinDesc": "Поне 3 символа.",
+      "generate": "Генерирай подсказка",
+      "generating": "Генериране…",
+      "shootAgain": "← Снимай отново",
+      "accept": "Приеми",
+      "editDesc": "← Промени описанието",
+      "completed": "Завършени: {{done}}/{{total}}",
+      "referenceAlt": "Референтна снимка",
+      "back": "Назад",
+      "hintFailed": "Не успяхме да генерираме подсказка",
+      "regenerateFailed": "Не успяхме да регенерираме"
     },
     "preview": {
-      "title": "Преглед",
+      "title": "Преглед преди публикуване",
       "publish": "Публикувай",
-      "edit": "Редактирай"
+      "publishing": "Публикуване…",
+      "edit": "Редактирай",
+      "subtitle": "{{count}}/10 задачи",
+      "addMore": "+ Добави задача ({{n}} остават)",
+      "back": "Назад",
+      "moveUp": "Нагоре",
+      "moveDown": "Надолу",
+      "deleteAria": "Изтрий",
+      "confirmDelete": "Сигурен ли си? Задачата се изтрива.",
+      "loadFailed": "Грешка при зареждане",
+      "reorderFailed": "Не успяхме да преподредим",
+      "publishFailed": "Не успяхме да публикуваме"
     },
     "play": {
       "title": "Намери съкровището",
       "hint": "Подсказка",
       "submit": "Изпрати снимка",
       "attempt": "Опит {{n}}",
-      "loading": "Зареждаме…"
+      "loading": "Зареждаме…",
+      "subtitle": "Намери обекта и го снимай. Опитите са неограничени.",
+      "captureLabel": "Снимай находката",
+      "captureDesc": "AI ще сравни с референцията.",
+      "back": "Назад",
+      "uploading": "Качване…",
+      "loadSessionFailed": "Не успяхме да заредим сесията",
+      "uploadFailed": "Не успяхме да качим снимката"
     },
     "scoring": {
       "title": "Сравняваме снимките…",
       "subtitle": "AI проверява дали си намерил съкровището.",
-      "match": "Намери съкровището! 🎉",
-      "noMatch": "Не съвпада",
+      "match": "Намерено!",
+      "noMatch": "Не е това",
       "next": "Следваща следа",
-      "finish": "Завърши"
+      "finish": "Завърши",
+      "missing": "Липсват данни за сравнение",
+      "scanning": "Сравнявам снимките…",
+      "errorFallback": "Грешка при сравнение",
+      "yourPhoto": "Твоята снимка",
+      "back": "Назад",
+      "tryAgain": "Опитай пак"
     }
   },
   "session": {
@@ -300,11 +456,34 @@
       "totalScore": "Общ резултат",
       "duration": "Време",
       "playAgain": "Играй пак",
-      "loadFailed": "Не можахме да заредим сесията"
+      "loadFailed": "Не успяхме да заредим сесията",
+      "back": "Назад към история",
+      "started": "Започната",
+      "finished": "Завършена",
+      "shareQuest": "Сподели quest-а",
+      "found": "✓ Намерено",
+      "attempts_one": "{{count}} опит",
+      "attempts_other": "{{count}} опита",
+      "leaderboard": "Класиране",
+      "taskAlt": "Задача {{n}}",
+      "notFound": "Сесията не е намерена"
     }
   },
   "empty": {
     "noQuests": "Все още нямаш игри",
-    "noQuestsDesc": "Започни първото си приключение."
+    "noQuestsDesc": "Започни първото си приключение.",
+    "noQuestsTitle": "Още няма приключения",
+    "noQuestsBody": "Натисни „Нов quest\", за да започнеш първото си.",
+    "cameraDeniedTitle": "Нямаме достъп до камерата",
+    "cameraDeniedBody": "Разреши камерата от настройките на браузъра, за да направиш снимка.",
+    "networkTitle": "Няма връзка",
+    "networkBody": "Провери интернета си и опитай отново.",
+    "expiredTitle": "Quest-ът е изтекъл",
+    "expiredBody": "Този quest вече не е достъпен. Започни ново приключение."
+  },
+  "notFound": {
+    "title": "404",
+    "body": "Опа! Страницата не е намерена",
+    "toHome": "Към началото"
   }
 }

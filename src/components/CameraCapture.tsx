@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { Camera, Loader2 } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
+import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
 
 export type CameraCaptureProps = {
@@ -18,16 +19,14 @@ const COMPRESSION_OPTS = {
   initialQuality: 0.82,
 } as const;
 
-/**
- * Big circular shutter button → opens device camera (rear) → compresses → calls onCapture.
- * Uses a hidden <input capture="environment"> to avoid the fragility of getUserMedia on iOS.
- */
 export function CameraCapture({
   onCapture,
-  label = 'Снимай',
+  label,
   description,
   disabled,
 }: CameraCaptureProps) {
+  const { t } = useTranslation();
+  const finalLabel = label ?? t('camera.capture');
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -38,7 +37,6 @@ export function CameraCapture({
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    // reset value so picking the same file twice still fires onChange
     e.target.value = '';
     if (!file) return;
 
@@ -49,8 +47,8 @@ export function CameraCapture({
     } catch (err) {
       console.error('[CameraCapture] compression failed', err);
       toast({
-        title: 'Неуспешно обработване на снимката',
-        description: 'Опитай отново.',
+        title: t('camera.compressFailedTitle'),
+        description: t('camera.compressFailedDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -64,13 +62,13 @@ export function CameraCapture({
         type="button"
         onClick={open}
         disabled={disabled || busy}
-        aria-label={label}
+        aria-label={finalLabel}
         className="inline-flex h-24 w-24 items-center justify-center rounded-full bg-terracotta-500 text-parchment-50 shadow-card transition-colors hover:bg-terracotta-700 disabled:cursor-not-allowed disabled:bg-parchment-200 disabled:text-ink-300 disabled:shadow-none"
       >
         {busy ? <Loader2 size={40} className="animate-spin" /> : <Camera size={40} />}
       </button>
       <div className="text-center">
-        <p className="text-sm font-medium text-ink-900">{busy ? 'Обработване…' : label}</p>
+        <p className="text-sm font-medium text-ink-900">{busy ? t('camera.processing') : finalLabel}</p>
         {description && <p className="mt-0.5 text-sm text-ink-500">{description}</p>}
       </div>
       <input

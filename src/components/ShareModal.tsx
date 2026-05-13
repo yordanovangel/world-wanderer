@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Copy, Share2, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
 
 type Props = {
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export function ShareModal({ questTitle, shareToken, onClose }: Props) {
+  const { t } = useTranslation();
   const shareUrl = useMemo(
     () => `${window.location.origin}/join/${shareToken}`,
     [shareToken],
@@ -26,10 +28,10 @@ export function ShareModal({ questTitle, shareToken, onClose }: Props) {
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      toast({ title: 'Копирано!' });
+      toast({ title: t('share.copied') });
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      toast({ title: 'Не успяхме да копираме', variant: 'destructive' });
+      toast({ title: t('share.copyFailed'), variant: 'destructive' });
     }
   };
 
@@ -38,7 +40,9 @@ export function ShareModal({ questTitle, shareToken, onClose }: Props) {
       try {
         await (navigator as any).share({
           title: questTitle ?? 'Reality Quest',
-          text: questTitle ? `Хайде да играем "${questTitle}"!` : 'Хайде да играем заедно!',
+          text: questTitle
+            ? t('share.nativeText', { title: questTitle })
+            : t('share.nativeTextNoTitle'),
           url: shareUrl,
         });
       } catch {
@@ -53,7 +57,7 @@ export function ShareModal({ questTitle, shareToken, onClose }: Props) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Сподели quest"
+      aria-label={t('share.modalTitle')}
       className="fixed inset-0 z-50 flex items-end justify-center bg-ink-900/40 px-4 py-6 backdrop-blur-sm sm:items-center"
       onClick={onClose}
     >
@@ -64,7 +68,7 @@ export function ShareModal({ questTitle, shareToken, onClose }: Props) {
         <button
           type="button"
           onClick={onClose}
-          aria-label="Затвори"
+          aria-label={t('share.close')}
           className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full text-ink-500 hover:bg-parchment-200 hover:text-ink-900"
         >
           <X size={18} />
@@ -72,7 +76,7 @@ export function ShareModal({ questTitle, shareToken, onClose }: Props) {
 
         <header className="text-center">
           <p className="text-xs font-semibold uppercase tracking-wider text-forest-700">
-            Сподели приключението
+            {t('share.header')}
           </p>
           {questTitle && (
             <h2 className="mt-1 line-clamp-2 font-display text-[20px] leading-tight text-ink-900">
@@ -97,7 +101,7 @@ export function ShareModal({ questTitle, shareToken, onClose }: Props) {
         <button
           type="button"
           onClick={onCopy}
-          aria-label="Копирай линка"
+          aria-label={t('share.copy')}
           className="mt-4 block w-full select-all break-all rounded-xl bg-white px-3 py-2.5 text-center font-mono-rq text-xs text-ink-700 shadow-soft transition-colors hover:bg-parchment-100"
         >
           {shareUrl}
@@ -109,14 +113,14 @@ export function ShareModal({ questTitle, shareToken, onClose }: Props) {
             onClick={onCopy}
             className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-ink-900 shadow-soft hover:bg-parchment-100"
           >
-            <Copy size={16} /> {copied ? 'Копирано!' : 'Копирай'}
+            <Copy size={16} /> {copied ? t('share.copied') : t('share.copyShort')}
           </button>
           <button
             type="button"
             onClick={onNativeShare}
             className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-terracotta-500 text-sm font-semibold text-parchment-50 shadow-soft hover:bg-terracotta-700"
           >
-            <Share2 size={16} /> Сподели
+            <Share2 size={16} /> {t('share.shareNative')}
           </button>
         </div>
 
@@ -125,7 +129,7 @@ export function ShareModal({ questTitle, shareToken, onClose }: Props) {
           onClick={onClose}
           className="mt-3 block w-full rounded-xl px-4 py-2 text-center text-sm font-medium text-ink-500 hover:bg-parchment-100 hover:text-ink-900"
         >
-          Готово
+          {t('common.done')}
         </button>
       </div>
     </div>

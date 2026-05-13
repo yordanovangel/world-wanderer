@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Settings, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth-context';
 import { initials } from '@/lib/format';
 import {
@@ -54,8 +55,9 @@ function useResource<T>(
 
 export default function HomePage() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const userId = user?.id ?? '';
-  const greeting = user?.nickname?.trim() || 'изследователю';
+  const greeting = user?.nickname?.trim() || t('home.fallbackName');
 
   const inProgress = useResource<SessionSummary[]>(
     () => (userId ? fetchInProgressSessions(userId) : Promise.resolve([])),
@@ -73,7 +75,6 @@ export default function HomePage() {
   const inProgressRef = useRef<HTMLElement | null>(null);
   const resumeShownRef = useRef(false);
 
-  // One-time resume banner per visit when in-progress sessions exist.
   useEffect(() => {
     if (resumeShownRef.current) return;
     if (inProgress.status !== 'ok') return;
@@ -81,8 +82,8 @@ export default function HomePage() {
     if (count === 0) return;
     resumeShownRef.current = true;
     toast({
-      title: `Имаш ${count} незавършен${count === 1 ? 'о' : 'и'} ${count === 1 ? 'приключение' : 'приключения'}`,
-      description: 'Натисни „Продължи", за да отидеш до тях.',
+      title: t('home.resumeToastTitle', { count }),
+      description: t('home.resumeToastDesc'),
       action: (
         <button
           type="button"
@@ -91,7 +92,7 @@ export default function HomePage() {
           }
           className="ml-2 inline-flex h-8 items-center justify-center rounded-lg bg-terracotta-500 px-3 text-xs font-semibold text-parchment-50 shadow-soft hover:bg-terracotta-700"
         >
-          Продължи
+          {t('home.resume')}
         </button>
       ) as any,
     });
@@ -100,17 +101,16 @@ export default function HomePage() {
 
   return (
     <div className="mx-auto w-full max-w-md">
-      {/* Top bar */}
       <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-parchment-200 bg-parchment-50/95 px-5 py-3 backdrop-blur">
         <div className="inline-flex h-10 w-10 flex-none items-center justify-center rounded-full bg-ochre-500 text-base font-semibold text-ink-900">
           {initials(user?.nickname)}
         </div>
         <p className="min-w-0 flex-1 truncate text-base font-medium text-ink-900">
-          Здрасти, {greeting}
+          {t('home.greeting', { name: greeting })}
         </p>
         <Link
           to="/profile"
-          aria-label="Настройки"
+          aria-label={t('home.settings')}
           className="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink-500 hover:bg-parchment-100 hover:text-ink-900"
         >
           <Settings size={20} />
@@ -118,27 +118,23 @@ export default function HomePage() {
       </header>
 
       <div className="space-y-7 px-5 py-5">
-        {/* Hero */}
         <section className="rounded-2xl bg-parchment-100 p-5 shadow-card">
-          <h1 className="font-display text-2xl text-ink-900">Какво ще откриеш днес?</h1>
-          <p className="mt-1 text-sm text-ink-500">
-            Започни ново приключение или продължи оставено
-          </p>
+          <h1 className="font-display text-2xl text-ink-900">{t('home.heroTitle')}</h1>
+          <p className="mt-1 text-sm text-ink-500">{t('home.heroSubtitle')}</p>
           <Link
             to="/create"
             className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-terracotta-500 px-4 text-base font-semibold text-parchment-50 shadow-soft transition-colors hover:bg-terracotta-700"
           >
-            <Plus size={18} /> Нов quest
+            <Plus size={18} /> {t('home.newQuest')}
           </Link>
         </section>
 
-        {/* In-progress */}
         {(inProgress.status === 'loading' ||
           inProgress.status === 'error' ||
           (inProgress.data && inProgress.data.length > 0)) && (
           <section ref={inProgressRef} id="in-progress">
             <h2 className="mb-3 px-1 text-xs font-semibold uppercase tracking-wider text-ink-500">
-              Продължи къде остана
+              {t('home.inProgress')}
             </h2>
             {inProgress.status === 'loading' && <HorizontalSkeletons />}
             {inProgress.status === 'error' && <SectionError onRetry={inProgress.reload} />}
@@ -152,14 +148,13 @@ export default function HomePage() {
           </section>
         )}
 
-        {/* Past sessions */}
         <section>
           <div className="mb-3 flex items-baseline justify-between px-1">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-ink-500">
-              Моите игри
+              {t('home.myGames')}
             </h2>
             <Link to="/history" className="text-sm font-medium text-forest-700 hover:underline">
-              Виж всички →
+              {t('home.viewAll')}
             </Link>
           </div>
           {past.status === 'loading' && <RowSkeletons />}
@@ -167,7 +162,7 @@ export default function HomePage() {
           {past.status === 'ok' && past.data && (
             past.data.length === 0 ? (
               <div className="rounded-xl border border-dashed border-parchment-200 bg-white/60 p-5 text-center text-sm text-ink-500">
-                Още не си играл никой quest. Натисни „+ Нов quest" да започнеш.
+                {t('home.noPlays')}
               </div>
             ) : (
               <div className="space-y-2">
@@ -183,20 +178,19 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* Created quests */}
         {(created.status === 'loading' ||
           created.status === 'error' ||
           (created.data && created.data.length > 0)) && (
           <section>
             <div className="mb-3 flex items-baseline justify-between px-1">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-ink-500">
-                Моите quest-ове
+                {t('home.myQuests')}
               </h2>
               <Link
                 to="/profile#created"
                 className="text-sm font-medium text-forest-700 hover:underline"
               >
-                Виж всички →
+                {t('home.viewAll')}
               </Link>
             </div>
             {created.status === 'loading' && <RowSkeletons />}

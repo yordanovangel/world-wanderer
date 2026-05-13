@@ -2,28 +2,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Loader2, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { CameraCapture } from '@/components/CameraCapture';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useAuth } from '@/lib/auth-context';
 import { toast } from '@/hooks/use-toast';
 import {
-  abandonSession,
-  fetchActiveSession,
-  fetchPublicTasks,
-  fetchQuest,
-  fetchSession,
-  fetchSubmissions,
-  startSession,
+  abandonSession, fetchActiveSession, fetchPublicTasks, fetchQuest,
+  fetchSession, fetchSubmissions, startSession,
 } from '@/lib/queries/quests';
 import { computeProgress, SOLO_MAX_ATTEMPTS } from '@/lib/quest-progress';
 
@@ -32,6 +22,7 @@ export default function QuestPlayPage() {
   const [searchParams] = useSearchParams();
   const initialSessionId = searchParams.get('session');
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [sessionId, setSessionId] = useState<string | null>(initialSessionId);
   const [bootstrapping, setBootstrapping] = useState(false);
@@ -47,21 +38,16 @@ export default function QuestPlayPage() {
       await abandonSession(sessionId);
       await queryClient.invalidateQueries({ queryKey: ['home'] });
       await queryClient.invalidateQueries({ queryKey: ['history'] });
-      toast({ title: 'Куестът е приключен' });
+      toast({ title: t('quest.play.abandonedToast') });
       navigate('/home', { replace: true });
     } catch (e: any) {
-      toast({
-        title: 'Не успяхме да откажем куеста',
-        description: e?.message,
-        variant: 'destructive',
-      });
+      toast({ title: t('quest.play.abandonFailed'), description: e?.message, variant: 'destructive' });
     } finally {
       setAbandoning(false);
       setConfirmAbandon(false);
     }
   };
 
-  // Resolve session: use param, else find active, else create one.
   useEffect(() => {
     if (!questId || !user || sessionId) return;
     let cancelled = false;
@@ -76,44 +62,25 @@ export default function QuestPlayPage() {
         const { session_id } = await startSession(questId);
         if (!cancelled) setSessionId(session_id);
       } catch (e: any) {
-        toast({ title: 'Не успяхме да заредим сесията', description: e?.message, variant: 'destructive' });
+        toast({ title: t('quest.play.loadFailed'), description: e?.message, variant: 'destructive' });
         navigate(`/quest/${questId}/intro`, { replace: true });
       } finally {
         if (!cancelled) setBootstrapping(false);
       }
     })();
-    return () => {
-      cancelled = true;
-    };
-  }, [questId, user, sessionId, navigate]);
+    return () => { cancelled = true; };
+  }, [questId, user, sessionId, navigate, t]);
 
-  const questQ = useQuery({
-    queryKey: ['quest', questId],
-    queryFn: () => fetchQuest(questId!),
-    enabled: !!questId,
-  });
-  const tasksQ = useQuery({
-    queryKey: ['quest-tasks', questId],
-    queryFn: () => fetchPublicTasks(questId!),
-    enabled: !!questId,
-  });
-  const sessionQ = useQuery({
-    queryKey: ['session', sessionId],
-    queryFn: () => fetchSession(sessionId!),
-    enabled: !!sessionId,
-  });
-  const submissionsQ = useQuery({
-    queryKey: ['submissions', sessionId],
-    queryFn: () => fetchSubmissions(sessionId!),
-    enabled: !!sessionId,
-  });
+  const questQ = useQuery({ queryKey: ['quest', questId], queryFn: () => fetchQuest(questId!), enabled: !!questId });
+  const tasksQ = useQuery({ queryKey: ['quest-tasks', questId], queryFn: () => fetchPublicTasks(questId!), enabled: !!questId });
+  const sessionQ = useQuery({ queryKey: ['session', sessionId], queryFn: () => fetchSession(sessionId!), enabled: !!sessionId });
+  const submissionsQ = useQuery({ queryKey: ['submissions', sessionId], queryFn: () => fetchSubmissions(sessionId!), enabled: !!sessionId });
 
   const progress = useMemo(() => {
     if (!tasksQ.data || !submissionsQ.data) return null;
     return computeProgress(tasksQ.data, submissionsQ.data, sessionQ.data?.task_order ?? null);
   }, [tasksQ.data, submissionsQ.data, sessionQ.data]);
 
-  // If session has been completed, route to complete screen.
   useEffect(() => {
     if (!sessionId || !progress) return;
     if (progress.isComplete || sessionQ.data?.status === 'completed') {
@@ -135,24 +102,14 @@ export default function QuestPlayPage() {
   const total = progress.states.length;
   const currentState = progress.states[progress.currentIndex];
   const currentTask = currentState.task;
-  const attemptsUsed = currentState.attempts.length;
-  const attemptsLeft = SOLO_MAX_ATTEMPTS - attemptsUsed;
+  const attemptsLeft = SOLO_MAX_ATTEMPTS - currentState.attempts.length;
 
   const onCapture = async (blob: Blob) => {
     try {
-      const { storage_path } = await upload(blob, {
-        session_id: sessionId,
-        task_id: currentTask.id,
-      });
-      navigate(
-        `/quest/${questId}/scoring?session=${sessionId}&task=${currentTask.id}&path=${encodeURIComponent(storage_path)}`,
-      );
+      const { storage_path } = await upload(blob, { session_id: sessionId, task_id: currentTask.id });
+      navigate(`/quest/${questId}/scoring?session=${sessionId}&task=${currentTask.id}&path=${encodeURIComponent(storage_path)}`);
     } catch (e: any) {
-      toast({
-        title: 'Не успяхме да качим снимката',
-        description: e?.message,
-        variant: 'destructive',
-      });
+      toast({ title: t('quest.play.uploadFailed'), description: e?.message, variant: 'destructive' });
     }
   };
 
@@ -160,47 +117,45 @@ export default function QuestPlayPage() {
     <div className="mx-auto w-full max-w-md px-5 pb-10 pt-6">
       <div className="flex items-center justify-between">
         <Link to="/home" className="inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900">
-          <ArrowLeft size={16} /> Назад
+          <ArrowLeft size={16} /> {t('quest.play.back')}
         </Link>
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-ink-500">
-            Задача {progress.currentIndex + 1}/{total}
+            {t('quest.play.taskShort', { current: progress.currentIndex + 1, total })}
           </span>
           <button
             type="button"
             onClick={() => setConfirmAbandon(true)}
             className="inline-flex h-9 min-w-[44px] items-center gap-1 rounded-lg px-2 text-xs font-medium text-ink-500 hover:bg-parchment-100 hover:text-danger-600"
-            aria-label="Откажи се от куеста"
+            aria-label={t('quest.play.abandonAria')}
           >
-            <X size={14} /> Откажи се
+            <X size={14} /> {t('quest.play.abandon')}
           </button>
         </div>
       </div>
 
       <article className="mt-5 rounded-2xl border-l-4 border-terracotta-500 bg-parchment-50 p-5 shadow-soft">
         <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-500">
-          Задача {currentTask.order_idx}
+          {t('quest.play.taskNumber', { n: currentTask.order_idx })}
         </p>
-        <h1 className="mt-1 font-display text-[24px] leading-tight text-ink-900">
-          {currentTask.title}
-        </h1>
+        <h1 className="mt-1 font-display text-[24px] leading-tight text-ink-900">{currentTask.title}</h1>
         <p className="mt-2 max-w-prose text-base text-ink-700">{currentTask.description}</p>
       </article>
 
       <p className="mt-3 text-sm italic text-ink-500">
-        Остават {attemptsLeft} {attemptsLeft === 1 ? 'опит' : 'опита'}
+        {t('quest.play.attemptsLeft', { count: attemptsLeft })}
       </p>
 
       <div className="mt-10 flex flex-col items-center">
         <CameraCapture
-          label="Заснеми отговора"
-          description="Снимай какво виждаш — AI ще го оцени."
+          label={t('quest.play.captureLabel')}
+          description={t('quest.play.captureDesc')}
           onCapture={onCapture}
           disabled={isUploading}
         />
         {isUploading && (
           <p className="mt-3 inline-flex items-center gap-2 text-sm text-ink-500">
-            <Loader2 size={14} className="animate-spin" /> Качване…
+            <Loader2 size={14} className="animate-spin" /> {t('quest.play.uploading')}
           </p>
         )}
       </div>
@@ -208,22 +163,17 @@ export default function QuestPlayPage() {
       <AlertDialog open={confirmAbandon} onOpenChange={setConfirmAbandon}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Сигурен ли си?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Куестът ще бъде маркиран като отказан. Прогресът ти ще бъде запазен в историята, но няма да можеш да го продължиш.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t('quest.play.abandonDialogTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('quest.play.abandonDialogDesc')}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={abandoning}>Назад</AlertDialogCancel>
+            <AlertDialogCancel disabled={abandoning}>{t('quest.play.abandonDialogCancel')}</AlertDialogCancel>
             <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault();
-                onAbandon();
-              }}
+              onClick={(e) => { e.preventDefault(); onAbandon(); }}
               disabled={abandoning}
               className="bg-danger-600 text-parchment-50 hover:bg-danger-600/90"
             >
-              {abandoning ? 'Отказване…' : 'Откажи се'}
+              {abandoning ? t('quest.play.abandoning') : t('quest.play.abandonDialogConfirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

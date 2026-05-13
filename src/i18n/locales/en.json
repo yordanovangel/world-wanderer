@@ -18,7 +18,13 @@
     "no": "No",
     "points": "pts",
     "of": "of",
-    "loadFailed": "Couldn't load"
+    "loadFailed": "Couldn't load",
+    "done": "Done",
+    "min": "min",
+    "anonymous": "Anonymous",
+    "you": "you",
+    "minutes_short": "min",
+    "you_inline": "(you)"
   },
   "tabs": {
     "home": "Home",
@@ -106,7 +112,19 @@
     "loadFailedTitle": "Couldn't load profile",
     "draft": "Draft",
     "archived": "Archived",
-    "published": "Published"
+    "published": "Published",
+    "createdTitle": "My quests",
+    "backToProfile": "Back to profile",
+    "shareBtn": "Share",
+    "archiveBtn": "Archive",
+    "archivingBtn": "Archiving…",
+    "archivedBtn": "Archived",
+    "confirmArchive": "Archived quests can't be started by new players. Active games continue.",
+    "archivedToast": "Quest archived",
+    "archiveFailed": "Couldn't archive",
+    "createdLoadFailed": "Couldn't load your quests",
+    "questNotFound": "Quest doesn't exist",
+    "createQuest": "Create quest"
   },
   "create": {
     "title": "Create a quest",
@@ -149,7 +167,10 @@
     "switchCamera": "Switch camera",
     "useUpload": "Upload a file instead",
     "starting": "Starting camera…",
-    "errorTitle": "Camera error"
+    "errorTitle": "Camera error",
+    "processing": "Processing…",
+    "compressFailedTitle": "Couldn't process the photo",
+    "compressFailedDesc": "Please try again."
   },
   "image": {
     "uploading": "Uploading…",
@@ -157,14 +178,25 @@
     "tooLarge": "File too large",
     "invalidType": "Invalid file type",
     "remove": "Remove",
-    "preview": "Preview"
+    "preview": "Preview",
+    "accept": "Accept",
+    "retake": "Retake",
+    "errorBadge": "Error"
   },
   "share": {
     "title": "Share adventure",
     "linkCopied": "Link copied",
     "copy": "Copy link",
     "shareNative": "Share",
-    "qrAlt": "QR code"
+    "qrAlt": "QR code",
+    "modalTitle": "Share quest",
+    "header": "Share the adventure",
+    "copied": "Copied!",
+    "copyShort": "Copy",
+    "copyFailed": "Couldn't copy",
+    "nativeText": "Let's play \"{{title}}\"!",
+    "nativeTextNoTitle": "Let's play together!",
+    "close": "Close"
   },
   "quest": {
     "intro": {
@@ -172,22 +204,55 @@
       "tasks_one": "{{count}} task",
       "tasks_other": "{{count}} tasks",
       "start": "Start",
+      "starting": "Starting…",
       "back": "Back",
-      "loadFailed": "Couldn't load the quest"
+      "loadFailed": "Couldn't load the quest",
+      "ready": "Your quest is ready!",
+      "shareWithFriend": "Share with a friend",
+      "notFound": "Quest doesn't exist",
+      "toHome": "To home",
+      "sourceImg": "Source {{n}}",
+      "startFailed": "Couldn't start a session"
     },
     "play": {
       "task": "Task {{current}} of {{total}}",
+      "taskShort": "Task {{current}}/{{total}}",
       "progress": "{{done}} of {{total}}",
       "submit": "Submit photo",
       "abandon": "Abandon",
       "abandonConfirm": "Are you sure you want to abandon?",
       "abandonErrorTitle": "Error abandoning",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "back": "Back",
+      "abandonAria": "Abandon the quest",
+      "abandonedToast": "Quest abandoned",
+      "abandonFailed": "Couldn't abandon the quest",
+      "loadFailed": "Couldn't load the session",
+      "uploadFailed": "Couldn't upload the photo",
+      "captureLabel": "Capture your answer",
+      "captureDesc": "Photograph what you see — AI will score it.",
+      "uploading": "Uploading…",
+      "attemptsLeft_one": "{{count}} attempt left",
+      "attemptsLeft_other": "{{count}} attempts left",
+      "taskNumber": "Task {{n}}",
+      "abandonDialogTitle": "Are you sure?",
+      "abandonDialogDesc": "The quest will be marked as abandoned. Your progress is kept in history but you won't be able to continue.",
+      "abandonDialogCancel": "Back",
+      "abandonDialogConfirm": "Abandon",
+      "abandoning": "Abandoning…",
+      "exit": "Exit",
+      "timeUp": "Time is up",
+      "uploadErrorTitle": "Upload error",
+      "cancelledToast": "The game was cancelled by the host"
     },
     "scoring": {
       "title": "Scoring your photo…",
       "subtitle": "AI is reviewing and assigning points.",
-      "errorTitle": "Scoring error"
+      "errorTitle": "Scoring error",
+      "missing": "Missing data for scoring",
+      "scanning": "Studying the photo…",
+      "yourPhoto": "Your photo",
+      "back": "Back"
     },
     "result": {
       "matchYes": "Match",
@@ -195,71 +260,119 @@
       "yourScore": "Your score",
       "feedback": "Feedback",
       "next": "Next task",
-      "finish": "Finish quest"
+      "finish": "Finish quest",
+      "found": "Found!",
+      "notQuite": "Not quite…",
+      "thisRemains": "Final — {{score}} points",
+      "current": "Current score: {{score}}/10 · attempt {{attempt}}/{{max}}",
+      "tryAgain": "Try again",
+      "acceptScore": "Accept {{score}} points",
+      "toResult": "To results",
+      "continue": "Continue",
+      "exit": "Exit to home",
+      "scoreSuffix": "+{{n}} points"
     },
     "complete": {
-      "title": "Done! 🎉",
-      "subtitle": "Quest completed.",
+      "title": "Quest completed!",
+      "subtitle": "Quest finished.",
       "totalScore": "Total score",
       "duration": "Time",
+      "score": "Score",
+      "perTask": "By task",
+      "shareResults": "Share results",
+      "toMyGames": "To my games",
       "toHome": "Back to home",
-      "shareResults": "Share results"
+      "loading": "Loading…"
     },
     "leaderboard": {
       "title": "Leaderboard",
       "noPlays": "No sessions played yet.",
       "share": "Share quest",
-      "loadFailed": "Couldn't load leaderboard"
+      "loadFailed": "Couldn't load leaderboard",
+      "rankings": "Ranking",
+      "noPlayers": "No players yet.",
+      "shareToStart": "Share the quest to start the leaderboard.",
+      "creatorBadge": "Creator"
     }
   },
   "solo": {
-    "captureTitle": "Photograph your surroundings",
-    "captureSubtitle": "Upload 3–8 photos. AI will create tasks from them.",
+    "captureTitle": "Take 1–3 photos of your surroundings",
+    "captureSubtitle": "AI will analyze them and generate a quest",
     "addPhoto": "Add photo",
-    "create": "Create quest",
+    "create": "Generate quest",
     "creating": "Creating…",
-    "needMore": "Upload at least 3 photos",
-    "errorTitle": "Creation error"
+    "needMore": "Upload at least 1 photo",
+    "errorTitle": "Creation error",
+    "uploadFailed": "Couldn't upload the photo — check your internet",
+    "uploadShort": "Couldn't upload the photo",
+    "generateFailed": "Couldn't generate quest",
+    "uploaded": "{{done}}/{{total}} uploaded",
+    "analyzing": "AI is analyzing…",
+    "mayTakeMinute": "This may take up to a minute.",
+    "removeAria": "Remove"
   },
   "multi": {
-    "captureTitle": "Capture for multiplayer",
-    "configTitle": "Settings",
+    "captureTitle": "Take 1–3 photos for the adventure",
+    "captureSubtitle": "AI will generate tasks your friends will play",
+    "configTitle": "How long?",
+    "configSubtitle": "The timer starts when you launch the room",
     "maxPlayers": "Max players",
     "timeLimit": "Time limit (min)",
-    "create": "Create room",
-    "creating": "Creating…",
-    "errorTitle": "Error"
+    "create": "Generate quest and open room",
+    "creating": "AI is creating the room…",
+    "errorTitle": "Error",
+    "missingPhotos": "Missing photos",
+    "missingPhotosDesc": "Capture them again.",
+    "createRoomFailed": "Couldn't create room",
+    "continueToConfig": "Continue to settings"
   },
   "room": {
     "lobby": {
-      "title": "Lobby",
+      "title": "Adventure room",
       "waiting": "Waiting for players…",
       "host": "Host",
-      "start": "Start",
+      "start": "Start ({{count}}/5)",
       "starting": "Starting…",
       "cancel": "Cancel room",
-      "share": "Share link",
+      "share": "Share room (QR + link)",
       "leave": "Leave",
       "errorStart": "Couldn't start",
-      "loadFailed": "Couldn't load the room"
+      "loadFailed": "Couldn't load the room",
+      "notFound": "Room doesn't exist",
+      "players": "Players",
+      "tasks": "{{count}} tasks",
+      "tasksWithTime": "{{count}} tasks · {{min}} min",
+      "tasksLoading": "… tasks",
+      "playerFallback": "Player",
+      "waitingHost": "Waiting for the host to start…",
+      "confirmCancel": "Are you sure? The game ends for everyone.",
+      "cancelledToast": "The game was cancelled by the host"
     },
     "play": { "title": "In game", "loading": "Loading the room…" },
     "results": {
       "title": "Results",
       "rank": "Rank",
       "score": "Score",
-      "toHome": "Back to home",
-      "share": "Share"
+      "toHome": "To my games",
+      "share": "Share",
+      "didNotFinish": "Didn't finish",
+      "noResults": "No results yet.",
+      "playerFallback": "Player",
+      "completed": "Completed",
+      "abandoned": "Abandoned",
+      "expired": "Expired"
     }
   },
   "treasure": {
     "wizard": {
       "title": "Create a treasure hunt",
-      "step": "Step {{current}} of {{total}}",
+      "intro": "You'll photograph 10 real objects. AI will craft fun hints for each. Your friends will have to find them using only the hints.",
+      "step": "Task {{current}} of {{total}}",
       "addObject": "Add object",
-      "describe": "Describe the object (what it is and where it is)",
-      "describePlaceholder": "e.g. \"Old fountain by the park entrance\"",
-      "regenerate": "Regenerate hint",
+      "describe": "Describe briefly what this is so AI understands",
+      "describePlaceholder": "e.g. \"the blue bench by the fountain in front of the office\"",
+      "regenerate": "Regenerate ({{n}} left)",
+      "noMoreRegens": "No more attempts",
       "regenerationsLeft": "{{n}} regenerations left",
       "saveTask": "Save task",
       "delete": "Delete object",
@@ -270,27 +383,70 @@
       "minTasks": "Add at least 3 objects",
       "maxTasks": "You reached the maximum of 10 objects",
       "errorTitle": "Error",
-      "hint": "AI hint"
+      "hint": "Hint",
+      "captureTaskTitle": "Task {{n}}: Photograph the object",
+      "captureSubtitle": "Capture exactly what your friends need to find.",
+      "captureLabel": "Photograph the object",
+      "preparing": "Preparing…",
+      "start": "Start",
+      "draftFailed": "Couldn't create draft",
+      "uploadFailed": "Upload failed",
+      "describeMin": "Describe the object",
+      "describeMinDesc": "At least 3 characters.",
+      "generate": "Generate hint",
+      "generating": "Generating…",
+      "shootAgain": "← Shoot again",
+      "accept": "Accept",
+      "editDesc": "← Edit description",
+      "completed": "Completed: {{done}}/{{total}}",
+      "referenceAlt": "Reference photo",
+      "back": "Back",
+      "hintFailed": "Couldn't generate hint",
+      "regenerateFailed": "Couldn't regenerate"
     },
     "preview": {
-      "title": "Preview",
+      "title": "Review before publishing",
       "publish": "Publish",
-      "edit": "Edit"
+      "publishing": "Publishing…",
+      "edit": "Edit",
+      "subtitle": "{{count}}/10 tasks",
+      "addMore": "+ Add task ({{n}} left)",
+      "back": "Back",
+      "moveUp": "Up",
+      "moveDown": "Down",
+      "deleteAria": "Delete",
+      "confirmDelete": "Are you sure? The task will be deleted.",
+      "loadFailed": "Loading error",
+      "reorderFailed": "Couldn't reorder",
+      "publishFailed": "Couldn't publish"
     },
     "play": {
       "title": "Find the treasure",
       "hint": "Hint",
       "submit": "Submit photo",
       "attempt": "Attempt {{n}}",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "subtitle": "Find the object and photograph it. Attempts are unlimited.",
+      "captureLabel": "Photograph the find",
+      "captureDesc": "AI will compare it to the reference.",
+      "back": "Back",
+      "uploading": "Uploading…",
+      "loadSessionFailed": "Couldn't load the session",
+      "uploadFailed": "Couldn't upload the photo"
     },
     "scoring": {
       "title": "Comparing photos…",
       "subtitle": "AI is checking whether you found the treasure.",
-      "match": "You found the treasure! 🎉",
-      "noMatch": "No match",
+      "match": "Found!",
+      "noMatch": "Not this one",
       "next": "Next clue",
-      "finish": "Finish"
+      "finish": "Finish",
+      "missing": "Missing data for comparison",
+      "scanning": "Comparing photos…",
+      "errorFallback": "Comparison error",
+      "yourPhoto": "Your photo",
+      "back": "Back",
+      "tryAgain": "Try again"
     }
   },
   "session": {
@@ -300,11 +456,34 @@
       "totalScore": "Total score",
       "duration": "Time",
       "playAgain": "Play again",
-      "loadFailed": "Couldn't load the session"
+      "loadFailed": "Couldn't load the session",
+      "back": "Back to history",
+      "started": "Started",
+      "finished": "Finished",
+      "shareQuest": "Share quest",
+      "found": "✓ Found",
+      "attempts_one": "{{count}} attempt",
+      "attempts_other": "{{count}} attempts",
+      "leaderboard": "Leaderboard",
+      "taskAlt": "Task {{n}}",
+      "notFound": "Session not found"
     }
   },
   "empty": {
     "noQuests": "You don't have any games yet",
-    "noQuestsDesc": "Start your first adventure."
+    "noQuestsDesc": "Start your first adventure.",
+    "noQuestsTitle": "No adventures yet",
+    "noQuestsBody": "Tap \"New quest\" to start your first one.",
+    "cameraDeniedTitle": "No camera access",
+    "cameraDeniedBody": "Allow camera access in your browser settings to take a photo.",
+    "networkTitle": "No connection",
+    "networkBody": "Check your internet and try again.",
+    "expiredTitle": "Quest expired",
+    "expiredBody": "This quest is no longer available. Start a new adventure."
+  },
+  "notFound": {
+    "title": "404",
+    "body": "Oops! Page not found",
+    "toHome": "Back to home"
   }
 }
