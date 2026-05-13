@@ -68,6 +68,7 @@ const Splash = () => {
 
   return (
     <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col px-6 py-8 rq-grain">
+      <LanguageToggle className="absolute right-5 top-5 z-10" />
       <div className="w-full pt-6 text-center animate-fade-slide-up">
         <div className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-terracotta-500 text-parchment-50 shadow-card">
           <Compass size={28} strokeWidth={2} />
