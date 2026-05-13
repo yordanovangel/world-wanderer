@@ -11,7 +11,10 @@ const ICONS: Record<QuestMode, React.ComponentType<LucideProps>> = {
 
 /** @deprecated Use t(`mode.${mode}`) instead — kept for compatibility. */
 export const MODE_LABEL: Record<QuestMode, string> = new Proxy({} as Record<QuestMode, string>, {
-  get: (_target, prop: string) => i18n.t(`mode.${prop}`),
+  get: (_target, prop) => {
+    if (typeof prop !== 'string') return undefined as unknown as string;
+    return i18n.t(`mode.${prop}`);
+  },
 });
 
 export function ModeIcon({
