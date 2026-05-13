@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import i18n from '@/i18n';
 import { supabase } from '@/integrations/supabase/client';
 
 export type UploadPurpose = 'quest_source' | 'task_reference' | 'task_submission';
@@ -51,7 +52,7 @@ export function useImageUpload(purpose: UploadPurpose) {
         );
 
         if (fnErr || !data) {
-          let message = fnErr?.message || 'Не успяхме да получим адрес за качване';
+          let message = fnErr?.message || i18n.t('upload.noUrl');
           const ctx = (fnErr as any)?.context;
           if (ctx && typeof ctx.json === 'function') {
             try {
@@ -66,7 +67,7 @@ export function useImageUpload(purpose: UploadPurpose) {
 
         const url = data.upload_urls[0];
         const path = data.paths[0];
-        if (!url || !path) throw new Error('Получен е празен upload URL');
+        if (!url || !path) throw new Error(i18n.t('upload.emptyUrl'));
 
         // 2) PUT blob directly to storage
         const res = await fetch(url, {
@@ -75,12 +76,12 @@ export function useImageUpload(purpose: UploadPurpose) {
           headers: { 'Content-Type': 'image/jpeg' },
         });
         if (!res.ok) {
-          throw new Error(`Качването неуспешно (${res.status})`);
+          throw new Error(i18n.t('upload.failedStatus', { status: res.status }));
         }
 
         return { storage_path: path, bucket: data.bucket };
       } catch (e: any) {
-        const msg = e?.message || 'Грешка при качване';
+        const msg = e?.message || i18n.t('upload.generic');
         setError(msg);
         throw e;
       } finally {

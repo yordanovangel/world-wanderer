@@ -151,7 +151,7 @@ export default function ProfilePage() {
               onClick={() => handleLangChange('bg')}
               className={`px-3 py-1.5 text-xs font-semibold ${lang === 'bg' ? 'bg-terracotta-500 text-parchment-50' : 'bg-white text-ink-700 hover:bg-parchment-100'}`}
             >
-              БГ
+              BG
             </button>
             <button
               type="button"

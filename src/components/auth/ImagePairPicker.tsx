@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 
@@ -20,6 +21,7 @@ const BUCKET = 'login-images';
  * — "first" / "second" — but normalization happens at submit time).
  */
 export function ImagePairPicker({ selected, onChange }: Props) {
+  const { t } = useTranslation();
   const [images, setImages] = useState<LoginImage[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +34,7 @@ export function ImagePairPicker({ selected, onChange }: Props) {
         .order('created_at', { ascending: true });
       if (cancelled) return;
       if (error) {
-        setError('Не успяхме да заредим картинките');
+        setError(t('auth.imagesLoadFailed'));
         return;
       }
       const shuffled = [...(data ?? [])];
@@ -85,7 +87,7 @@ export function ImagePairPicker({ selected, onChange }: Props) {
   if (images.length === 0) {
     return (
       <p className="rounded-xl border border-parchment-200 bg-white p-4 text-center text-sm text-ink-500">
-        Няма качени картинки в пула. Свържи се с администратор.
+        {t('auth.imagesEmpty')}
       </p>
     );
   }
@@ -113,7 +115,7 @@ export function ImagePairPicker({ selected, onChange }: Props) {
                   : 'ring-1 ring-parchment-200 hover:ring-parchment-200',
               )}
               aria-pressed={isSelected}
-              aria-label={img.label ?? 'картинка'}
+              aria-label={img.label ?? t('auth.imageAria')}
             >
               <img
                 src={urlFor(img.storage_path)}
@@ -133,7 +135,7 @@ export function ImagePairPicker({ selected, onChange }: Props) {
       </div>
       {selectedImages.length > 0 && (
         <p className="text-center text-xs text-ink-500">
-          Избрани: {selectedImages.map((i) => i.label || '—').join(' + ')}
+          {t('auth.selectedLabels', { labels: selectedImages.map((i) => i.label || '—').join(' + ') })}
         </p>
       )}
     </div>
