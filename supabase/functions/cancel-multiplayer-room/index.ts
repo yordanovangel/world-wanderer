@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, locFn } from '../_shared/auth.ts';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
   let body: any;
   try { body = await req.json(); } catch { return jsonResponse({ error: 'Invalid JSON' }, 400); }
   const roomId: string = body?.room_id;
-  if (!roomId || !UUID_RE.test(roomId)) return jsonResponse({ error: 'Невалиден room_id' }, 400);
+  if (!roomId || !UUID_RE.test(roomId)) return jsonResponse({ error: locFn(req, 'Невалиден room_id', 'Invalid room_id') }, 400);
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     .select('id, host_id, status')
     .eq('id', roomId)
     .maybeSingle();
-  if (!room) return jsonResponse({ error: 'Стаята не съществува' }, 404);
+  if (!room) return jsonResponse({ error: locFn(req, 'Стаята не съществува', 'Room doesn\'t exist') }, 404);
   if (room.host_id !== userId) return jsonResponse({ error: 'Forbidden' }, 403);
   if (room.status === 'cancelled') return jsonResponse({ ok: true });
 

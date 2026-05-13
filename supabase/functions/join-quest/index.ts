@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, verifyAppJwt } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, verifyAppJwt, locFn } from '../_shared/auth.ts';
 
 const LATE_JOIN_WINDOW_SEC = 60;
 
@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
   try { body = await req.json(); } catch { return jsonResponse({ error: 'Invalid JSON' }, 400); }
   const shareToken: string = body?.share_token;
   if (!shareToken || typeof shareToken !== 'string') {
-    return jsonResponse({ error: 'Невалиден линк' }, 400);
+    return jsonResponse({ error: locFn(req, 'Невалиден линк', 'Invalid link') }, 400);
   }
 
   const supabase = createClient(
@@ -29,8 +29,8 @@ Deno.serve(async (req) => {
     .select('id, mode, status')
     .eq('share_token', shareToken)
     .maybeSingle();
-  if (!quest) return jsonResponse({ error: 'Quest не съществува' }, 404);
-  if (quest.status === 'archived') return jsonResponse({ error: 'Quest архивиран' }, 410);
+  if (!quest) return jsonResponse({ error: locFn(req, 'Quest не съществува', 'Quest doesn\'t exist') }, 404);
+  if (quest.status === 'archived') return jsonResponse({ error: locFn(req, 'Quest архивиран', 'Quest archived') }, 410);
 
   // SOLO / TREASURE: ensure session, redirect to play.
   if (quest.mode !== 'multiplayer') {
@@ -72,9 +72,9 @@ Deno.serve(async (req) => {
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (!room) return jsonResponse({ error: 'Няма активна стая' }, 404);
+  if (!room) return jsonResponse({ error: locFn(req, 'Няма активна стая', 'No active room') }, 404);
   if (room.status === 'cancelled' || room.status === 'finished') {
-    return jsonResponse({ error: 'Играта приключи' }, 410);
+    return jsonResponse({ error: locFn(req, 'Играта приключи', 'The game has ended') }, 410);
   }
 
   // Already a player?
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
   if (room.status === 'in_progress' && room.started_at) {
     const elapsed = (Date.now() - new Date(room.started_at).getTime()) / 1000;
     if (elapsed > LATE_JOIN_WINDOW_SEC) {
-      return jsonResponse({ error: 'Играта вече започна' }, 410);
+      return jsonResponse({ error: locFn(req, 'Играта вече започна', 'The game has already started') }, 410);
     }
   }
 
@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
     .from('room_players')
     .select('*', { count: 'exact', head: true })
     .eq('room_id', room.id);
-  if ((count ?? 0) >= 5) return jsonResponse({ error: 'Стаята е пълна' }, 409);
+  if ((count ?? 0) >= 5) return jsonResponse({ error: locFn(req, 'Стаята е пълна', 'Room is full') }, 409);
 
   const { data: tasks } = await supabase
     .from('quest_tasks')
@@ -125,7 +125,7 @@ Deno.serve(async (req) => {
     })
     .select('id')
     .single();
-  if (!created) return jsonResponse({ error: 'Не успяхме да създадем сесия' }, 500);
+  if (!created) return jsonResponse({ error: locFn(req, 'Не успяхме да създадем сесия', 'Couldn\'t create a session') }, 500);
 
   await supabase.from('room_players').insert({
     room_id: room.id,

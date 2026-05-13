@@ -44,6 +44,11 @@ export function resolveLang(req: Request, body?: unknown): Lang {
   return 'bg';
 }
 
+/** Pick BG/EN string based on request's resolved language. */
+export function locFn(req: Request, bg: string, en: string): string {
+  return resolveLang(req) === 'en' ? en : bg;
+}
+
 export function langInstruction(lang: Lang): string {
   return lang === 'en'
     ? 'Respond in English. All natural-language fields must be written in English.'

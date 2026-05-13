@@ -1,3 +1,4 @@
+import { locFn } from '../_shared/auth.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { SignJWT } from 'https://esm.sh/jose@5.9.4';
 import bcrypt from 'https://esm.sh/bcryptjs@2.4.3';
@@ -66,19 +67,19 @@ Deno.serve(async (req) => {
   const pin: string | undefined = payload?.pin;
 
   if (nickname !== undefined && nickname.length > NICK_MAX) {
-    return json({ error: 'Псевдонимът е твърде дълъг' }, 400);
+    return json({ error: locFn(req, 'Псевдонимът е твърде дълъг', 'Nickname is too long') }, 400);
   }
   if (!img_a_id || !img_b_id || !UUID_RE.test(img_a_id) || !UUID_RE.test(img_b_id)) {
-    return json({ error: 'Невалидни картинки' }, 400);
+    return json({ error: locFn(req, 'Невалидни картинки', 'Invalid images') }, 400);
   }
   if (img_a_id === img_b_id) {
-    return json({ error: 'Избери две различни картинки' }, 400);
+    return json({ error: locFn(req, 'Избери две различни картинки', 'Pick two different images') }, 400);
   }
   if (img_a_id >= img_b_id) {
-    return json({ error: 'Картинките трябва да са нормализирани (a < b)' }, 400);
+    return json({ error: locFn(req, 'Картинките трябва да са нормализирани (a < b)', 'Images must be normalized (a < b)') }, 400);
   }
   if (!pin || !PIN_RE.test(pin)) {
-    return json({ error: 'PIN-ът трябва да е 4 цифри' }, 400);
+    return json({ error: locFn(req, 'PIN-ът трябва да е 4 цифри', 'PIN must be 4 digits') }, 400);
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
@@ -90,10 +91,10 @@ Deno.serve(async (req) => {
     .in('id', [img_a_id, img_b_id]);
   if (imgErr) {
     console.error('img lookup', imgErr);
-    return json({ error: 'Грешка в базата данни' }, 500);
+    return json({ error: locFn(req, 'Грешка в базата данни', 'Database error') }, 500);
   }
   if (!imgs || imgs.length !== 2) {
-    return json({ error: 'Картинките не съществуват' }, 400);
+    return json({ error: locFn(req, 'Картинките не съществуват', 'Images don\'t exist') }, 400);
   }
 
   const pin_hash = await bcrypt.hash(pin, 10);
@@ -118,12 +119,12 @@ Deno.serve(async (req) => {
     // Postgres unique violation
     if ((insErr as any).code === '23505') {
       return json(
-        { error: 'Тази комбинация е заета — опитай друг код или други картинки' },
+        { error: locFn(req, 'Тази комбинация е заета — опитай друг код или други картинки', 'This combination is taken — try a different code or images') },
         409,
       );
     }
     console.error('insert user', insErr);
-    return json({ error: 'Грешка при създаване на акаунт' }, 500);
+    return json({ error: locFn(req, 'Грешка при създаване на акаунт', 'Failed to create account') }, 500);
   }
 
   const token = await signToken(inserted.id, JWT_SECRET);

@@ -40,10 +40,22 @@
     "haveAccount": "I already have an account",
     "version": "v0.2 · stage 2",
     "slides": {
-      "solo": { "title": "Solo quest", "desc": "AI turns your photos into personal missions." },
-      "multi": { "title": "Multiplayer", "desc": "Up to 5 players, one map, one timer." },
-      "treasure": { "title": "Treasure hunt", "desc": "Lay clues. Lead your friends." },
-      "journal": { "title": "Journal", "desc": "Memories from every adventure." }
+      "solo": {
+        "title": "Solo quest",
+        "desc": "AI turns your photos into personal missions."
+      },
+      "multi": {
+        "title": "Multiplayer",
+        "desc": "Up to 5 players, one map, one timer."
+      },
+      "treasure": {
+        "title": "Treasure hunt",
+        "desc": "Lay clues. Lead your friends."
+      },
+      "journal": {
+        "title": "Journal",
+        "desc": "Memories from every adventure."
+      }
     },
     "show": "Show {{title}}"
   },
@@ -71,7 +83,10 @@
     "selected": "Selected: {{n}}/2",
     "tapToDeselect": "Tap again to deselect",
     "imagesLoadFailed": "Couldn't load the images",
-    "pinDigit": "PIN digit {{n}}"
+    "pinDigit": "PIN digit {{n}}",
+    "imagesEmpty": "No images uploaded to the pool. Contact an administrator.",
+    "imageAria": "image",
+    "selectedLabels": "Selected: {{labels}}"
   },
   "home": {
     "greeting": "Hi, {{name}}",
@@ -88,7 +103,10 @@
     "resumeToastTitle_one": "You have {{count}} unfinished adventure",
     "resumeToastTitle_other": "You have {{count}} unfinished adventures",
     "resumeToastDesc": "Tap \"Resume\" to jump back in.",
-    "resume": "Resume"
+    "resume": "Resume",
+    "expiresIn_one": "Expires in {{count}} day",
+    "expiresIn_other": "Expires in {{count}} days",
+    "tasksWord": "tasks"
   },
   "profile": {
     "title": "Profile",
@@ -129,15 +147,34 @@
   "create": {
     "title": "Create a quest",
     "subtitle": "Pick a mode to begin.",
-    "solo": { "title": "Solo", "desc": "Photograph your surroundings and get 4–11 mini-tasks from AI" },
-    "multi": { "title": "Multiplayer", "desc": "Up to 5 friends compete on time and points" },
-    "treasure": { "title": "Treasure hunt", "desc": "Photograph 10 objects — your friends find them with AI hints" }
+    "solo": {
+      "title": "Solo",
+      "desc": "Photograph your surroundings and get 4–11 mini-tasks from AI"
+    },
+    "multi": {
+      "title": "Multiplayer",
+      "desc": "Up to 5 friends compete on time and points"
+    },
+    "treasure": {
+      "title": "Treasure hunt",
+      "desc": "Photograph 10 objects — your friends find them with AI hints"
+    }
   },
   "history": {
     "title": "My games",
     "filterAria": "Filter",
-    "tabs": { "all": "All", "completed": "Completed", "in_progress": "In progress", "expired": "Expired" },
-    "status": { "in_progress": "In progress", "completed": "Completed", "abandoned": "Abandoned", "expired": "Expired" },
+    "tabs": {
+      "all": "All",
+      "completed": "Completed",
+      "in_progress": "In progress",
+      "expired": "Expired"
+    },
+    "status": {
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "abandoned": "Abandoned",
+      "expired": "Expired"
+    },
     "newQuest": "New quest",
     "deleteAria": "Delete session",
     "confirmDelete": "Delete \"{{title}}\" from history? This action cannot be undone.",
@@ -146,9 +183,18 @@
     "loadErrorTitle": "Couldn't load history",
     "loadMoreErrorTitle": "Couldn't load more"
   },
-  "mode": { "solo": "Solo", "multiplayer": "Multiplayer", "treasure_hunt": "Treasure" },
+  "mode": {
+    "solo": "Solo",
+    "multiplayer": "Multiplayer",
+    "treasure_hunt": "Treasure"
+  },
   "join": {
-    "errors": { "not_found": "This quest doesn't exist", "archived": "The quest is archived", "invalid_link": "Invalid link", "fail": "Couldn't join you" },
+    "errors": {
+      "not_found": "This quest doesn't exist",
+      "archived": "The quest is archived",
+      "invalid_link": "Invalid link",
+      "fail": "Couldn't join you"
+    },
     "cantJoin": "Can't join",
     "toHome": "Back to home",
     "invitation": "Adventure invitation",
@@ -348,7 +394,10 @@
       "confirmCancel": "Are you sure? The game ends for everyone.",
       "cancelledToast": "The game was cancelled by the host"
     },
-    "play": { "title": "In game", "loading": "Loading the room…" },
+    "play": {
+      "title": "In game",
+      "loading": "Loading the room…"
+    },
     "results": {
       "title": "Results",
       "rank": "Rank",
@@ -485,5 +534,11 @@
     "title": "404",
     "body": "Oops! Page not found",
     "toHome": "Back to home"
+  },
+  "upload": {
+    "failedStatus": "Upload failed ({{status}})",
+    "noUrl": "Couldn't get an upload URL",
+    "emptyUrl": "Received an empty upload URL",
+    "generic": "Upload error"
   }
 }

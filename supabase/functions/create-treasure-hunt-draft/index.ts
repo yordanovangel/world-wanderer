@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, verifyAppJwt } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, verifyAppJwt, locFn } from '../_shared/auth.ts';
 
 function nanoToken(len = 10): string {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz';
@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
 
   if (error || !data) {
     console.error('insert draft', error);
-    return jsonResponse({ error: 'Не успяхме да създадем чернова' }, 500);
+    return jsonResponse({ error: locFn(req, 'Не успяхме да създадем чернова', 'Couldn\'t create the draft') }, 500);
   }
 
   return jsonResponse({ quest_id: data.id, share_token: data.share_token });

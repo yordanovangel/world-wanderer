@@ -6,17 +6,12 @@ import { daysRemaining, sessionExpiresAt } from '@/lib/format';
 import { ModeIcon } from './ModeIcon';
 
 export function InProgressCard({ s }: { s: SessionSummary }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const total = Math.max(s.total_tasks, 1);
   const pct = Math.min(100, Math.round((s.submitted_tasks / total) * 100));
   const days = daysRemaining(sessionExpiresAt(s.started_at));
-  const dayLabel = i18n.language.startsWith('en')
-    ? days === 1 ? 'day' : 'days'
-    : days === 1 ? 'ден' : 'дни';
-  const expiresLabel = i18n.language.startsWith('en')
-    ? `Expires in ${days} ${dayLabel}`
-    : `Изтича след ${days} ${dayLabel}`;
-  const tasksLabel = i18n.language.startsWith('en') ? 'tasks' : 'задачи';
+  const expiresLabel = t('home.expiresIn', { count: days });
+  const tasksLabel = t('home.tasksWord');
 
   return (
     <Link

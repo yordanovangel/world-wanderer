@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { jwtVerify } from 'https://esm.sh/jose@5.9.4';
-import { getUserLang, type Lang } from '../_shared/auth.ts';
+import { getUserLang, type Lang, locFn } from '../_shared/auth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -179,7 +179,7 @@ Deno.serve(async (req) => {
     typeof submissionPath !== 'string' ||
     !submissionPath.startsWith(`${sessionId}/${taskId}/`)
   ) {
-    return json({ error: errMsg(lang, 'Невалидни входни данни', 'Invalid input') }, 400);
+    return json({ error: errMsg(lang, locFn(req, 'Невалидни входни данни', 'Invalid input'), 'Invalid input') }, 400);
   }
 
   // Load session
@@ -192,10 +192,10 @@ Deno.serve(async (req) => {
     console.error('session lookup', sErr);
     return json({ error: 'Database error' }, 500);
   }
-  if (!session) return json({ error: errMsg(lang, 'Сесията не съществува', 'Session does not exist') }, 404);
+  if (!session) return json({ error: errMsg(lang, locFn(req, 'Сесията не съществува', 'Session doesn\'t exist'), 'Session does not exist') }, 404);
   if (session.player_id !== userId) return json({ error: 'Forbidden' }, 403);
   if (session.status !== 'in_progress') {
-    return json({ error: errMsg(lang, 'Сесията не е активна', 'Session is not active') }, 409);
+    return json({ error: errMsg(lang, locFn(req, 'Сесията не е активна', 'Session is not active'), 'Session is not active') }, 409);
   }
 
   // Load task (with hidden criteria — server-side only)
@@ -208,7 +208,7 @@ Deno.serve(async (req) => {
     console.error('task lookup', tErr);
     return json({ error: 'Database error' }, 500);
   }
-  if (!task) return json({ error: errMsg(lang, 'Задачата не съществува', 'Task does not exist') }, 404);
+  if (!task) return json({ error: errMsg(lang, locFn(req, 'Задачата не съществува', 'Task doesn\'t exist'), 'Task does not exist') }, 404);
   if (task.quest_id !== session.quest_id) return json({ error: 'Forbidden' }, 403);
   if (!task.hidden_criteria) {
     return json({ error: errMsg(lang, 'Тази задача не се оценява автоматично', 'This task is not auto-scored') }, 400);
@@ -250,7 +250,7 @@ Deno.serve(async (req) => {
     return json({ error: 'Database error' }, 500);
   }
   if ((existingAttempts ?? 0) >= MAX_ATTEMPTS) {
-    return json({ error: errMsg(lang, 'Няма повече опити за тази задача', 'No more attempts for this task') }, 409);
+    return json({ error: errMsg(lang, locFn(req, 'Няма повече опити за тази задача', 'No more attempts for this task'), 'No more attempts for this task') }, 409);
   }
   const attemptNo = (existingAttempts ?? 0) + 1;
 
@@ -270,8 +270,8 @@ Deno.serve(async (req) => {
     result = await callAi(systemPrompt, signed.signedUrl, lang);
   } catch (e: any) {
     console.error('ai 1', e?.message, e?.body);
-    if (e?.status === 429) return json({ error: errMsg(lang, 'AI системата е заета.', 'AI is busy.') }, 429);
-    if (e?.status === 402) return json({ error: errMsg(lang, 'Изчерпан AI кредит.', 'AI credits exhausted.') }, 402);
+    if (e?.status === 429) return json({ error: errMsg(lang, locFn(req, 'AI системата е заета.', 'AI is busy.'), 'AI is busy.') }, 429);
+    if (e?.status === 402) return json({ error: errMsg(lang, locFn(req, 'Изчерпан AI кредит.', 'AI credits exhausted.'), 'AI credits exhausted.') }, 402);
     try {
       result = await callAi(systemPrompt, signed.signedUrl, lang);
     } catch (e2: any) {
@@ -293,7 +293,7 @@ Deno.serve(async (req) => {
   });
   if (insErr) {
     console.error('insert submission', insErr);
-    return json({ error: errMsg(lang, 'Не успяхме да запазим резултата', "Couldn't save the result") }, 500);
+    return json({ error: errMsg(lang, locFn(req, 'Не успяхме да запазим резултата', 'Couldn\'t save the result'), "Couldn't save the result") }, 500);
   }
 
   // Check completion: count distinct task_ids whose best score >= 6 OR have 2 attempts

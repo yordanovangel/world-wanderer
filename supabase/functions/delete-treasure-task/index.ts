@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, locFn } from '../_shared/auth.ts';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
   try { body = await req.json(); } catch { return jsonResponse({ error: 'Invalid JSON' }, 400); }
   const taskId: string = body?.task_id;
   if (!taskId || !UUID_RE.test(taskId)) {
-    return jsonResponse({ error: 'Невалиден task_id' }, 400);
+    return jsonResponse({ error: locFn(req, 'Невалиден task_id', 'Invalid task_id') }, 400);
   }
 
   const supabase = createClient(
@@ -27,23 +27,23 @@ Deno.serve(async (req) => {
     .select('id, quest_id, order_idx')
     .eq('id', taskId)
     .maybeSingle();
-  if (!task) return jsonResponse({ error: 'Задачата не съществува' }, 404);
+  if (!task) return jsonResponse({ error: locFn(req, 'Задачата не съществува', 'Task doesn\'t exist') }, 404);
 
   const { data: quest } = await supabase
     .from('quests')
     .select('creator_id, status')
     .eq('id', task.quest_id)
     .maybeSingle();
-  if (!quest) return jsonResponse({ error: 'Quest не съществува' }, 404);
+  if (!quest) return jsonResponse({ error: locFn(req, 'Quest не съществува', 'Quest doesn\'t exist') }, 404);
   if (quest.creator_id !== userId) return jsonResponse({ error: 'Forbidden' }, 403);
   if (quest.status !== 'draft') {
-    return jsonResponse({ error: 'Quest-ът вече е публикуван' }, 409);
+    return jsonResponse({ error: locFn(req, 'Quest-ът вече е публикуван', 'Quest is already published') }, 409);
   }
 
   const { error: delErr } = await supabase.from('quest_tasks').delete().eq('id', taskId);
   if (delErr) {
     console.error('delete task', delErr);
-    return jsonResponse({ error: 'Не успяхме да изтрием задачата' }, 500);
+    return jsonResponse({ error: locFn(req, 'Не успяхме да изтрием задачата', 'Couldn\'t delete the task') }, 500);
   }
 
   // Resequence remaining tasks for this quest

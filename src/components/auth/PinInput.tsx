@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   value: string;
@@ -11,6 +12,7 @@ type Props = {
  * Stores its value as a 4-char string (digits only).
  */
 export function PinInput({ value, onChange, autoFocus }: Props) {
+  const { t } = useTranslation();
   const refs = useRef<Array<HTMLInputElement | null>>([]);
 
   useEffect(() => {
@@ -71,7 +73,7 @@ export function PinInput({ value, onChange, autoFocus }: Props) {
           onChange={(e) => setDigit(i, e.target.value)}
           onKeyDown={(e) => handleKey(i, e)}
           className="h-12 w-12 rounded-xl border border-parchment-200 bg-white text-center font-mono-rq text-xl text-ink-900 shadow-soft outline-none transition focus:border-terracotta-500 focus:ring-2 focus:ring-terracotta-500/30"
-          aria-label={`PIN цифра ${i + 1}`}
+          aria-label={t('auth.pinDigit', { n: i + 1 })}
         />
       ))}
     </div>

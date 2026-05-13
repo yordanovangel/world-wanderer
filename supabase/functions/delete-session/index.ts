@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, verifyAppJwt, UUID_RE } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, verifyAppJwt, UUID_RE, locFn } from '../_shared/auth.ts';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -30,10 +30,10 @@ Deno.serve(async (req) => {
     .eq('id', sessionId)
     .maybeSingle();
   if (sErr) return jsonResponse({ error: sErr.message }, 500);
-  if (!session) return jsonResponse({ error: 'Сесията не съществува' }, 404);
+  if (!session) return jsonResponse({ error: locFn(req, 'Сесията не съществува', 'Session doesn\'t exist') }, 404);
   if (session.player_id !== userId) return jsonResponse({ error: 'Forbidden' }, 403);
   if (session.status === 'in_progress') {
-    return jsonResponse({ error: 'Не можеш да изтриеш активна сесия. Първо я приключи.' }, 400);
+    return jsonResponse({ error: locFn(req, 'Не можеш да изтриеш активна сесия. Първо я приключи.', 'Can\'t delete an active session. Finish it first.') }, 400);
   }
 
   // Best-effort cleanup of submissions (storage objects are kept; rows reference them).

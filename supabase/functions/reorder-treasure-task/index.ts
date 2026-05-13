@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
-import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt } from '../_shared/auth.ts';
+import { corsHeaders, jsonResponse, UUID_RE, verifyAppJwt, locFn } from '../_shared/auth.ts';
 
 /**
  * Reorder treasure tasks. Input: { quest_id, ordered_task_ids: string[] }.
@@ -22,10 +22,10 @@ Deno.serve(async (req) => {
   const questId: string = body?.quest_id;
   const ids: string[] = Array.isArray(body?.ordered_task_ids) ? body.ordered_task_ids : [];
   if (!questId || !UUID_RE.test(questId)) {
-    return jsonResponse({ error: 'Невалиден quest_id' }, 400);
+    return jsonResponse({ error: locFn(req, 'Невалиден quest_id', 'Invalid quest_id') }, 400);
   }
   if (ids.length === 0 || ids.some((x) => typeof x !== 'string' || !UUID_RE.test(x))) {
-    return jsonResponse({ error: 'Невалиден списък със задачи' }, 400);
+    return jsonResponse({ error: locFn(req, 'Невалиден списък със задачи', 'Invalid task list') }, 400);
   }
 
   const supabase = createClient(
@@ -38,10 +38,10 @@ Deno.serve(async (req) => {
     .select('creator_id, status')
     .eq('id', questId)
     .maybeSingle();
-  if (!quest) return jsonResponse({ error: 'Quest не съществува' }, 404);
+  if (!quest) return jsonResponse({ error: locFn(req, 'Quest не съществува', 'Quest doesn\'t exist') }, 404);
   if (quest.creator_id !== userId) return jsonResponse({ error: 'Forbidden' }, 403);
   if (quest.status !== 'draft') {
-    return jsonResponse({ error: 'Quest-ът вече е публикуван' }, 409);
+    return jsonResponse({ error: locFn(req, 'Quest-ът вече е публикуван', 'Quest is already published') }, 409);
   }
 
   const { data: tasks } = await supabase
@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
     .eq('quest_id', questId);
   const ownIds = new Set((tasks ?? []).map((t: any) => t.id));
   if (ids.length !== ownIds.size || ids.some((id) => !ownIds.has(id))) {
-    return jsonResponse({ error: 'Списъкът не съвпада със задачите' }, 400);
+    return jsonResponse({ error: locFn(req, 'Списъкът не съвпада със задачите', 'List doesn\'t match the tasks') }, 400);
   }
 
   // Two-pass to avoid potential unique conflicts.
